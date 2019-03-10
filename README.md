@@ -4,6 +4,8 @@
 
 Στην Ελλάδα πέρα απο κάποιες μετρήσεις για την ατμοσφαιρική ρύπανση που γίνονται κυρίως στην Αθήνα και την θεσσαλονίκη, δεν γνωρίζουμε σε πραγματικό χρόνο τι συμβαίνει στην ατμόσφαιρα.
 
+![](https://github.com/TechnologyClubOfThrace/Environmental-Monitoring-Station/blob/master/environmental-monitoring-station.jpg)
+
 
 ### Το hardware
 Η κατασκευή βασίζεται στο [ESP32-DevKitC](https://www.espressif.com/en/products/hardware/development-boards "ESP32-DevKitC") που εχει ενσωματωμένο WiFi ώστε να μπορούμε να αποστείλουμε τα δεδομένα στον [Thingboard IoT server](https://thingsboard.io/ "Thingboard IoT server").
