@@ -1,6 +1,6 @@
 ﻿/* ***********************************************************************
  * Environmental Monitoring Station
- * (C) 2019 by Yiannis Bourkelis (hello@andama.org)
+ * (C) 2019 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
  * (C) 2019 by Marios Zikos
  *
  * This file is part of Environmental Monitoring Station.

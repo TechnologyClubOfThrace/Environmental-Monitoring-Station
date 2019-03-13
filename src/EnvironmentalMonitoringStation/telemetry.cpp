@@ -1,6 +1,6 @@
 ﻿/* ***********************************************************************
  * Environmental Monitoring Station
- * (C) 2019 by Yiannis Bourkelis (hello@andama.org)
+ * (C) 2019 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
  * (C) 2019 by Marios Zikos
  *
  * This file is part of Environmental Monitoring Station.
@@ -23,6 +23,8 @@
 
 //for http post request to IoT server
 #include <HTTPClient.h>
+
+#include "uptime_formatter.h"
 
 Telemetry::Telemetry()
 {
@@ -91,7 +93,10 @@ String Telemetry::getTelemetryJson()
   json += "\"temperature\":\""+ temperature +"\"";
   json += ",\"pressure\":\""+ pressure + "\"";
   json += ",\"photoresistor\":\""+ photoresistor + "\"";
+  json += ",\"uptime\":\"" + uptime_formatter::get_uptime() + "\"";
   json += "}";
+
+  Serial.println("Uptime: " + uptime_formatter::get_uptime());
 
   return json;
 }
