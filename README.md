@@ -50,6 +50,10 @@ USA Labor Department - [Ποιότητα αέρα εσωτερικών χώρω�
 [https://opensensemap.org](https://opensensemap.org "https://opensensemap.org")
 Ο συγκεκριμένος οργανισμός κατασκευάζει και τον περιβαλλοντικό σταθμό αισθητήρων **senseBox** και έχει δημοσιεύσει αναλυτικά τους αισθητήρες που χρησιμοποιεί εδώ: [https://www.sensebox.de/en/products](https://www.sensebox.de/en/products "https://www.sensebox.de/en/products")
 
+[http://safecast.org/tilemap/](http://safecast.org/tilemap/ "http://safecast.org/tilemap/")
+Ο [οργανισμός SafeCast](https://blog.safecast.org "οργανισμός SafeCast") δημιουργήθηκε από εθελοντές μετά το πυρηνικό ατύχημα στη Fucushima το 2011. Έχουν κατασκευάσει περιβαλλοντικούς σταθμούς καταγραφής  των επιπέδων της ραδιενέργειας και άλλων δεδομένων και έχουν ανεβάσει τα πάντα στο [github ώς open source και open hardware](https://github.com/Safecast "github ώς open source και open hardware").
+Τα kit των συσκευών υπάρχουν εδώ: [https://github.com/Safecast/General/wiki/Safecast-Devices](https://github.com/Safecast/General/wiki/Safecast-Devices "https://github.com/Safecast/General/wiki/Safecast-Devices")
+
 [http://maps.luftdaten.info/](http://maps.luftdaten.info/ "http://maps.luftdaten.info/")
  Πληροφορίες για την κατασκευή του **Fine Dust Sensor** που αποστέλει δεδομένα για τον παραπάνω χάρτη υπάρχουν εδώ: [https://luftdaten.info/en/construction-manual/](https://luftdaten.info/en/construction-manual/ "https://luftdaten.info/en/construction-manual/")
 
