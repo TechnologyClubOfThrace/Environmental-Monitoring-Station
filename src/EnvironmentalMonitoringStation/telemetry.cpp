@@ -93,10 +93,10 @@ String Telemetry::getTelemetryJson()
   json += "\"temperature\":\""+ temperature +"\"";
   json += ",\"pressure\":\""+ pressure + "\"";
   json += ",\"photoresistor\":\""+ photoresistor + "\"";
-  json += ",\"uptime\":\"" + uptime_formatter::get_uptime() + "\"";
+  json += ",\"uptime\":\"" + uptime_formatter::getUptime() + "\"";
   json += "}";
 
-  Serial.println("Uptime: " + uptime_formatter::get_uptime());
+  Serial.println("Uptime: " + uptime_formatter::getUptime());
 
   return json;
 }

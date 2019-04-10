@@ -27,6 +27,8 @@
 #include <OneWire.h> 
 #include <DallasTemperature.h>
 
+#include <limits>
+
 //BMP180
 #include <Wire.h>
 #include <Adafruit_BMP085.h>
@@ -48,9 +50,27 @@ void setup() {
     // Oops, something went wrong, this is usually a connection problem,
     // see the comments at the top of this sketch for the proper connections.
     Serial.println("BMP180 init fail\n\n");
+
+    Serial.println(std::numeric_limits<unsigned long>::max());
   }
 
+  // Your WiFi credentials.// Set password to "" for open networks.
+  static char * ssid = "steth";
+  static char * password = "ilovecomputers";
+
+  IPAddress ip (192,168,1,25);
+  IPAddress dns (1,1,1,1);
+  IPAddress gateway (192,168,1,20);
+  IPAddress netmask (255,255,255,0);
+  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000);
+  WiFi.config(ip, gateway, netmask, dns); 
+  //WiFi.config(ip); 
+  
+  Serial.println("WiFi.begin(ssid, password)...");
+  WiFi.begin(ssid, password);
+
   Serial.println("Starting ...");
+  delay(2000);
 }
 
 void read_temperature()
@@ -88,23 +108,18 @@ void read_barometric_pressure()
 
 void connect_to_wifi()
 {
-  // Your WiFi credentials.// Set password to "" for open networks.
-  static char * ssid = "Yiannis";
-  static char * password = "yiannis";
-  
-  if (WiFi.status() != WL_CONNECTED){
-    Serial.println("WiFi.begin(ssid, password)...");
-    WiFi.begin(ssid, password);
-
+  if(WiFi.status() != WL_CONNECTED){
+    WiFi.reconnect();
+    
     while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
+      delay(1000);
       Serial.println("Connecting to WiFi..");
     }
-      Serial.println("Connected to the WiFi network.");
-      Serial.print("WiFi IP address: ");
-      Serial.println(WiFi.localIP());
+    
+    Serial.println("Connected to the WiFi network.");
+    Serial.print("WiFi IP address: ");
+    Serial.println(WiFi.localIP());
   }
-  
 }
 
 void loop() {
