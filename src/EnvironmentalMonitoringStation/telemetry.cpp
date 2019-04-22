@@ -22,7 +22,7 @@
 #include "telemetry.h"
 
 //for http post request to IoT server
-#include <HTTPClient.h>
+#include "HTTPClient.h"
 
 #include "uptime_formatter.h"
 

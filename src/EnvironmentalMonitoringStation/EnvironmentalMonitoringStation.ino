@@ -27,7 +27,7 @@
 #include <OneWire.h> 
 #include <DallasTemperature.h>
 
-#include <limits>
+#include <limits.h>
 
 //BMP180
 #include <Wire.h>
@@ -51,13 +51,15 @@ void setup() {
     // see the comments at the top of this sketch for the proper connections.
     Serial.println("BMP180 init fail\n\n");
 
-    Serial.println(std::numeric_limits<unsigned long>::max());
+    //Serial.println(std::numeric_limits<unsigned long>::max());
   }
 
   // Your WiFi credentials.// Set password to "" for open networks.
   static char * ssid = "steth";
   static char * password = "ilovecomputers";
 
+/*
+ * CONFIGURATION FOR STATIC IP -
   IPAddress ip (192,168,1,25);
   IPAddress dns (1,1,1,1);
   IPAddress gateway (192,168,1,20);
@@ -65,6 +67,7 @@ void setup() {
   //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000);
   WiFi.config(ip, gateway, netmask, dns); 
   //WiFi.config(ip); 
+  */
   
   Serial.println("WiFi.begin(ssid, password)...");
   WiFi.begin(ssid, password);
@@ -109,7 +112,7 @@ void read_barometric_pressure()
 void connect_to_wifi()
 {
   if(WiFi.status() != WL_CONNECTED){
-    WiFi.reconnect();
+    //WiFi.reconnect();
     
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
