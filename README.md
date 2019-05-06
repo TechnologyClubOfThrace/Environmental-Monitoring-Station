@@ -66,6 +66,8 @@ USA Labor Department - [Ποιότητα αέρα εσωτερικών χώρω�
 ### Προμήθεια hardware
 Παρακάτω είναι οι δύο πίνακες με την αναλυτική περιγραφή του κόστους καθώς και σύνδεσμοι αγοράς για τους αισθητήρες και τα υλικά που χρειάζονται για την κατασκευή του σταθμού.
 
+###### Πίνακας 1
+
 |  Αισθητήρας | Μοντέλο | Arduino API | Κόστος | Αγορά από  |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 | Θερμοκρασίας  | DS18B20   | [ΝΑΙ - Library Manager](https://www.arduinolibraries.info/libraries/dallas-temperature)  |  3.50 | [eBay MAKERSHOP](https://www.ebay.com/itm/3x-DS18B20-Wasserdicht-Digital-Temperatur-Fuhler-Sensor-Raspberry-Pi-Arduino/253585471592?hash=item3b0adf3868:g:Wr8AAOSwxLdb3Zdt "eBay MAKERSHOP")  |
@@ -96,6 +98,8 @@ USA Labor Department - [Ποιότητα αέρα εσωτερικών χώρω�
 
 - Κάποιοι από τους αισθητήρες θέλουν έρευνα για να καταλάβουμε πώς λειτουργούν και πώς μπορούμε να πάρουμε ακριβείς μετρήσεις, καθώς δεν συνοδεύνται απο API. Για αυτό τον λόγο θα πρέπει να έχουμε ένα πρόχειρο arduino device ώστε να κάνουμε έλεγχο ένα-ένα αυτους αισθητήρες μέχρι να γράψουμε τον σωστό κώδικα. Στη συνέχεια μπορούμε να δημιουργήσουμε ένα library και να το προσφέρουμε και στην κοινότητα των arduino developers.
 
+###### Πίνακας 2
+
 | Υλικό  | Περιγραφή  | Κόστος  | Αγορά από  |
 | ------------ | ------------ | ------------ | ------------ |
 | ESP32  | Ο μικροελεγκτής όπου συνδέονται όλα   | 8.35  |  [eBay MAKERSHOP](https://www.ebay.com/itm/Espressif-ESP32-WLAN-Dev-Kit-Board-Development-Bluetooth-Wifi-v1-WROOM32-NodeMCU/253059783728?hash=item3aeb89dc30:g:5-8AAOSwAThb3MaZ "eBay MAKERSHOP")  |
@@ -105,3 +109,22 @@ USA Labor Department - [Ποιότητα αέρα εσωτερικών χώρω�
 | Breadboard 830  | Για τη σύνδεση του ESP32 και των αισθητήρων  |  3.75 |  [eBay MAKERHSOP](https://www.ebay.com/itm/MB-102-830-Kontakte-Breadboard-gros-Steckbrett-Raspberry-Pi-Experimentier/252860727462?hash=item3adfac80a6:g:wC4AAOSwn01b3zoN "eBay MAKERHSOP") |
 
 Σύμφωνα με τα παραπάνω, το συνολικό κόστος για την κατασκευή ενός περιβαλλοντικού σταθμού είναι περίπου 130€
+
+Για την αρχική υλοποίηση αρκούν τα υλικά του παρακάτω πίνακα 3, κυρίως λόγω του ότι το API είναι σχετικά εύκολο στην υλοποίηση και μας αρκούν για την περιβαλλοντική παρατήρηση. Στη συνέχεια μπορούμε να παραγγείλουμε και τους άλλους αισθητήρες οι οποίει θα κάνουν τον σταθμό ακόμα καλύτερο αλλά και που αυξάνουν και την πολυπλοκότητα του κώδικα.
+
+###### Πίνακας 3
+
+| Υλικό  | Περιγραφή  | Κόστος  | Αγορά από  |
+| ------------ | ------------ | ------------ | ------------ |
+| ESP32  | Ο μικροελεγκτής όπου συνδέονται όλα   | 8.35  |  [eBay MAKERSHOP](https://www.ebay.com/itm/Espressif-ESP32-WLAN-Dev-Kit-Board-Development-Bluetooth-Wifi-v1-WROOM32-NodeMCU/253059783728?hash=item3aeb89dc30:g:5-8AAOSwAThb3MaZ "eBay MAKERSHOP")  |
+| Jumper wire male-female  | Καλώδια σύνδεσης | 2.49  |  [eBay MAKERSHOP](https://www.ebay.com/itm/Jumper-Wire-Steckbrucken-Steckbrett-Kabel-20p-male-female-mannlich-weiblich/252715145677?hash=item3ad6ff19cd:m:mz_Na6LfgzHzHslqexs0NfQ&var=551695342124 "eBay MAKERSHOP") |
+| Jumper wire male-male  |  Καλώδια σύνδεσης | 2.49  |   |
+| Breadboard 400 | Για τη σύνδεση του ESP32 και των αισθητήρων  | 3.85  |  [eBay MAKERSHOP](https://www.ebay.com/itm/Premium-Steckbrett-400-Kontakte-Breadboard-Transparent-durchsichtig-transparent/252715004864?hash=item3ad6fcf3c0:g:E5wAAOSwXOhb5H0n "eBay MAKERSHOP") |
+| Breadboard 830  | Για τη σύνδεση του ESP32 και των αισθητήρων  |  3.75 |  [eBay MAKERHSOP](https://www.ebay.com/itm/MB-102-830-Kontakte-Breadboard-gros-Steckbrett-Raspberry-Pi-Experimentier/252860727462?hash=item3adfac80a6:g:wC4AAOSwn01b3zoN "eBay MAKERHSOP") |
+| DS18B20 | Αισθητήρας Θερμοκρασίας | 3.50 | [eBay MAKERSHOP](https://www.ebay.com/itm/3x-DS18B20-Wasserdicht-Digital-Temperatur-Fuhler-Sensor-Raspberry-Pi-Arduino/253585471592?hash=item3b0adf3868:g:Wr8AAOSwxLdb3Zdt "eBay MAKERSHOP") |
+| BME280 | Αισθητήρας Υγρασίας / Ατμοσ. πίεσης | 5.75 | [eBay MAKERSHOP](https://www.ebay.com/itm/BME280-Temperatur-Sensor-Luftdruck-Feuchtigkeit-I2C-5V-Barometer-Arduino-Digital/253107395109?hash=item3aee605a25:g:Ol8AAOSwHWtb3znL "eBay MAKERSHOP") |
+| PMS7003 | Αισθητήρας Μικροσωματιδίων MP2.5/10 | 15.44 | [Aliexpress](https://www.aliexpress.com/item/PLANTOWER-Laser-PM2-5-DUST-SENSOR-PMS7003-G7-Thin-shape-Laser-digital-PM2-5-sensor-Inculd/32784279004.html?spm=2114.search0604.3.9.14ec3794G5sCkA&ws_ab_test=searchweb0_0,searchweb201602_6_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10304_10307_10820_10821_537_10302_536,searchweb201603_52,ppcSwitch_0&algo_expid=fab9744e-8fdf-46f4-a08f-b32e40ab44f8-1&algo_pvid=fab9744e-8fdf-46f4-a08f-b32e40ab44f8 "Aliexpress")  |
+| MQ-7 | Αισθητήρας Μονοξειδίου του άνθρακα | 3.99 | [eBay MAKERSHOP](https://www.ebay.com/itm/MQ-7-Kohlenmonoxid-Sensor-CO-Gas-Sensor-Modul-Raspberry-Pi-Arduino/252715061610?hash=item3ad6fdd16a:g:OoIAAOSwUpFb4cC4 "eBay MAKERSHOP") |
+| MH-Z19 | Αισθητήρας Διοξειδίου του άνθρακα | 18.14 | [Aliexpress](https://www.aliexpress.com/item/MH-Z19-infrared-co2-sensor-for-co2-monitor-carbon-dioxide-sensor-UART-PWM-serial-output-0/32916782044.html?spm=2114.search0604.3.2.131712c0k5jgr2&ws_ab_test=searchweb0_0,searchweb201602_6_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10304_10307_10820_10821_537_10302_536,searchweb201603_52,ppcSwitch_0&algo_expid=4933ca2c-6944-4ce4-a4d8-526522e070d7-0&algo_pvid=4933ca2c-6944-4ce4-a4d8-526522e070d7) |
+|  | Αισθητήρας Ηχορύπανσης | 2.90 | [eBay MAKERSHOP](https://www.ebay.com/itm/Analog-Sound-Sensor-Gerauschsensor-Sensor-Mikrofon-Modul-Arduino-Raspberry-Pi/252909274219?hash=item3ae291446b:g:pvcAAOSw2-pb4H2j "eBay MAKERSHOP") |
+|  | Συνολικό κόστος:  | 70.65 |  |
