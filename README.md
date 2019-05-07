@@ -119,6 +119,7 @@ USA Labor Department - [Ποιότητα αέρα εσωτερικών χώρω�
 | Υλικό  | Περιγραφή  | Κόστος  | Αγορά από  |
 | ------------ | ------------ | ------------ | ------------ |
 | ESP32  | Ο μικροελεγκτής όπου συνδέονται όλα   | 8.35  |  [eBay MAKERSHOP](https://www.ebay.com/itm/Espressif-ESP32-WLAN-Dev-Kit-Board-Development-Bluetooth-Wifi-v1-WROOM32-NodeMCU/253059783728?hash=item3aeb89dc30:g:5-8AAOSwAThb3MaZ "eBay MAKERSHOP")  |
+| Τροφοδοτικό mico usb 5v/3A  | Το τροφοδοτικό του ESP32   | 6.09  |  [eBay](https://www.ebay.com/itm/5V-3A-Micro-USB-AC-Adapter-DC-Power-Supply-Charger-For-Raspberry-Pi-Switch-CH/132940358909?hash=item1ef3dce4fd:m:mseD9SU8kSc8es0lGj11DUg)  |
 | Jumper wire male-female  | Καλώδια σύνδεσης | 2.49  |  [eBay MAKERSHOP](https://www.ebay.com/itm/Jumper-Wire-Steckbrucken-Steckbrett-Kabel-20p-male-female-mannlich-weiblich/252715145677?hash=item3ad6ff19cd:m:mz_Na6LfgzHzHslqexs0NfQ&var=551695342124 "eBay MAKERSHOP") |
 | Jumper wire male-male  |  Καλώδια σύνδεσης | 2.49  |   |
 | Breadboard 400 | Για τη σύνδεση του ESP32 και των αισθητήρων  | 3.85  |  [eBay MAKERSHOP](https://www.ebay.com/itm/Premium-Steckbrett-400-Kontakte-Breadboard-Transparent-durchsichtig-transparent/252715004864?hash=item3ad6fcf3c0:g:E5wAAOSwXOhb5H0n "eBay MAKERSHOP") |
