@@ -10,9 +10,9 @@
 
 
 ### Το hardware
-Η κατασκευή βασίζεται στο [ESP32-DevKitC](https://www.espressif.com/en/products/hardware/development-boards "ESP32-DevKitC") που εχει ενσωματωμένο WiFi ώστε να μπορούμε να αποστείλουμε τα δεδομένα στον [Thingboard IoT server](https://thingsboard.io/ "Thingboard IoT server").
+Η κατασκευή βασίζεται στο [ESP32-DevKitC](https://www.espressif.com/en/products/hardware/development-boards "ESP32-DevKitC") που εχει ενσωματωμένο WiFi ώστε να μπορούμε να αποστείλουμε τα δεδομένα στον [Thingboard IoT server](https://thingsboard.io/ "Thingboard IoT server"). Όλοι οι αισθητήρες που ενδέχεται να χρησιμοποιηθούν βρίσκονται στην ενότητα [Προμήθεια Hardware](#προμήθεια-hardware)
 
-###### Οι αισθητήρες που χρησιμοποιούνται ειναι:
+###### Ενδεικτικά κάποιοι αισθητήρες που θα χρησιμοποιηθούν:
 
     Αισθητήρας μικρόσωματιδίων MP 10 και MP 2.5
     Αισθητήρας αζώτου
