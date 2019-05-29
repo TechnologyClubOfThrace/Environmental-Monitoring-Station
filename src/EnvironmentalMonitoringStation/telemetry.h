@@ -28,10 +28,12 @@ class Telemetry
     void setTemperatureCelcius(float temperature_celcius);
     void setPhotoresistor(float photoresistor);
     void setBarometricPressure(float barometricPressure);
+    void setHumidity(float humidity);
     
     float getTemperatureCelcius();
     float getPhotoresistor();
     float getBarometricPressure();
+    float getHumidity();
     String getTelemetryJson();
     
     void send_data_to_iot_server();
@@ -40,4 +42,5 @@ class Telemetry
     float m_temperature_celcius = -300;
     float m_photoresistor = -300;
     float m_barometricPressure = -300;
+    float m_humidity = -300;
 };

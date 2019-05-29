@@ -46,6 +46,11 @@ void Telemetry::setBarometricPressure(float barometricPressure)
   m_barometricPressure = barometricPressure;
 }
 
+void Telemetry::setHumidity(float humidity)
+{
+  m_humidity = humidity;
+}
+
 float Telemetry::getTemperatureCelcius()
 {
   return m_temperature_celcius;
@@ -59,6 +64,11 @@ float Telemetry::getPhotoresistor()
 float Telemetry::getBarometricPressure()
 {
   return m_barometricPressure;
+}
+
+float Telemetry::getHumidity()
+{
+  return m_humidity;
 }
 
 void Telemetry::send_data_to_iot_server()
@@ -87,11 +97,13 @@ String Telemetry::getTelemetryJson()
 
   String temperature = (String)getTemperatureCelcius();
   String pressure = (String)getBarometricPressure();
+  String humidity = (String)getHumidity();
   String photoresistor = (String)getPhotoresistor();
   
   json += "{";
   json += "\"temperature\":\""+ temperature +"\"";
   json += ",\"pressure\":\""+ pressure + "\"";
+    json += ",\"humidity\":\""+ humidity + "\"";
   json += ",\"photoresistor\":\""+ photoresistor + "\"";
   json += ",\"uptime\":\"" + uptime_formatter::getUptime() + "\"";
   json += "}";

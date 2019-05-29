@@ -29,10 +29,10 @@
 
 #include <limits.h>
 
-//BMP180
-#include <Wire.h>
-#include <Adafruit_BMP085.h>
-Adafruit_BMP085 bmp180;
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+
+Adafruit_BME280 bme280;
 
 #include "telemetry.h"
 Telemetry telemetry;
@@ -44,12 +44,13 @@ void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_PIN, OUTPUT);
 
-  if (bmp180.begin())
-    Serial.println("BMP180 init success");
+
+  if (bme280.begin(0x76))
+    Serial.println("BME280 init success");
   else {
     // Oops, something went wrong, this is usually a connection problem,
     // see the comments at the top of this sketch for the proper connections.
-    Serial.println("BMP180 init fail\n\n");
+    Serial.println("BMP280 init fail\n\n");
 
     //Serial.println(std::numeric_limits<unsigned long>::max());
   }
@@ -79,7 +80,7 @@ void setup() {
 void read_temperature()
 {
   // temperature Data wire is plugged into pin 13 on the Arduino
-  static const byte ONE_WIRE_BUS = 13;
+  static const byte ONE_WIRE_BUS = 15;
   // 9 - 12 precision
   static const byte TEMPERATURE_PRECISION = 12;
   
@@ -96,17 +97,26 @@ void read_temperature()
   Serial.println(telemetry.getTemperatureCelcius());
 }
 
+/*
 void read_photoresistor()
 {
   telemetry.setPhotoresistor(analogRead(34));
   Serial.print("Photoresistor is: ");
   Serial.println(telemetry.getPhotoresistor());
 }
+*/
+
 
 void read_barometric_pressure()
 {
-  telemetry.setBarometricPressure(bmp180.readPressure() / 100);
+  telemetry.setBarometricPressure(bme280.readPressure() / 100);
   Serial.println("Barometric pressure is: " + (String)telemetry.getBarometricPressure() + " hPa");
+}
+
+void read_humidity()
+{
+  telemetry.setHumidity(bme280.readHumidity());
+  Serial.println("Humidity is: " + (String)telemetry.getHumidity() + " %");
 }
 
 void connect_to_wifi()
@@ -118,14 +128,16 @@ void connect_to_wifi()
       delay(1000);
       Serial.println("Connecting to WiFi..");
     }
-    
-    Serial.println("Connected to the WiFi network.");
-    Serial.print("WiFi IP address: ");
-    Serial.println(WiFi.localIP());
   }
+
+  Serial.println("Connected to the WiFi network.");
+  Serial.print("WiFi IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 void loop() {
+  Serial.println("Begin loop");
+  
   //connects to the wifi if not connected.
   //Returns only when a wifi connection is established.
   connect_to_wifi();
@@ -133,11 +145,14 @@ void loop() {
   //reads the temperature from the sensor
   read_temperature();
 
-  //reads the barometric pressure from the sensor
+  //reads the barometric pressure from the BME280 sensor
   read_barometric_pressure();
 
+  //reads the humidity from the BME280 sensor
+  read_humidity();
+
   //reads the photoresistor value from the sensor
-  read_photoresistor();
+  //read_photoresistor();
 
   //sends all sensor data to the iot server
   telemetry.send_data_to_iot_server();
