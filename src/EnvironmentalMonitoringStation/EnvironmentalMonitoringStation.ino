@@ -1,6 +1,8 @@
 /* ************************************************************************
  * Environmental Monitoring Station
  * (C) 2019 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
+ * (C) 2019 by Yiannis Grigoriadis
+ * (C) 2019 by Kostas Laftsis
  * (C) 2019 by Marios Zikos
  *
  * This file is part of Environmental Monitoring Station.
@@ -55,6 +57,9 @@ void setup() {
     //Serial.println(std::numeric_limits<unsigned long>::max());
   }
 
+  //carbon monixide sensor analog pin
+  pinMode(34, INPUT);
+
   // Your WiFi credentials.// Set password to "" for open networks.
   static char * ssid = "steth";
   static char * password = "ilovecomputers";
@@ -75,6 +80,29 @@ void setup() {
 
   Serial.println("Starting ...");
   delay(2000);
+}
+
+void read_carbon_monoxide()
+{
+  //A0 is 36 in ESP32 (GPIO36)
+  int sensorValue = analogRead(34);
+  telemetry.setCarbonMonoxide(sensorValue);
+  Serial.println("CarbonMonoxide is: " + (String)telemetry.getCarbonMonoxide());
+
+/*
+  float R0 = 7200.0;
+  float sensor_volt = sensorValue / (1024.0 * 5.0);
+  Serial.println("sensor_volt:" + (String)sensor_volt);
+  float RS_gas = (5.0 - sensor_volt) / sensor_volt;
+  Serial.println("RS_gas:" + (String)RS_gas);
+  float ratio = RS_gas / R0; //Replace R0 with the value found using the sketch above
+  Serial.println("ratio:" + (String)ratio);
+  float x = 1538.46 * ratio;
+  Serial.println("x:" + (String)x);
+  float ppm = pow (x, -1.709);
+  Serial.print("PPM: ");
+  Serial.println((String)ppm);
+  */
 }
 
 void read_temperature()
@@ -150,6 +178,9 @@ void loop() {
 
   //reads the humidity from the BME280 sensor
   read_humidity();
+  
+  //reads the carbon monoxide value from the MQ-7 sensor
+  read_carbon_monoxide();
 
   //reads the photoresistor value from the sensor
   //read_photoresistor();

@@ -1,6 +1,8 @@
 ﻿/* ***********************************************************************
  * Environmental Monitoring Station
  * (C) 2019 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
+ * (C) 2019 by Yiannis Grigoriadis
+ * (C) 2019 by Kostas Laftsis
  * (C) 2019 by Marios Zikos
  *
  * This file is part of Environmental Monitoring Station.
@@ -29,11 +31,13 @@ class Telemetry
     void setPhotoresistor(float photoresistor);
     void setBarometricPressure(float barometricPressure);
     void setHumidity(float humidity);
+    void setCarbonMonoxide(float carbonMonoxide);
     
     float getTemperatureCelcius();
     float getPhotoresistor();
     float getBarometricPressure();
     float getHumidity();
+    float getCarbonMonoxide();
     String getTelemetryJson();
     
     void send_data_to_iot_server();
@@ -43,4 +47,5 @@ class Telemetry
     float m_photoresistor = -300;
     float m_barometricPressure = -300;
     float m_humidity = -300;
+    float m_carbonMonoxide = -300;
 };

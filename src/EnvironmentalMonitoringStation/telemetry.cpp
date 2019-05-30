@@ -1,6 +1,8 @@
 ﻿/* ***********************************************************************
  * Environmental Monitoring Station
  * (C) 2019 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
+ * (C) 2019 by Yiannis Grigoriadis
+ * (C) 2019 by Kostas Laftsis
  * (C) 2019 by Marios Zikos
  *
  * This file is part of Environmental Monitoring Station.
@@ -51,6 +53,11 @@ void Telemetry::setHumidity(float humidity)
   m_humidity = humidity;
 }
 
+void Telemetry::setCarbonMonoxide(float carbonMonoxide)
+{
+  m_carbonMonoxide = carbonMonoxide;
+}
+
 float Telemetry::getTemperatureCelcius()
 {
   return m_temperature_celcius;
@@ -69,6 +76,11 @@ float Telemetry::getBarometricPressure()
 float Telemetry::getHumidity()
 {
   return m_humidity;
+}
+
+float Telemetry::getCarbonMonoxide()
+{
+  return m_carbonMonoxide;
 }
 
 void Telemetry::send_data_to_iot_server()
@@ -98,12 +110,14 @@ String Telemetry::getTelemetryJson()
   String temperature = (String)getTemperatureCelcius();
   String pressure = (String)getBarometricPressure();
   String humidity = (String)getHumidity();
+  String carbonMonoxide = (String)getCarbonMonoxide();
   String photoresistor = (String)getPhotoresistor();
   
   json += "{";
   json += "\"temperature\":\""+ temperature +"\"";
   json += ",\"pressure\":\""+ pressure + "\"";
-    json += ",\"humidity\":\""+ humidity + "\"";
+  json += ",\"humidity\":\""+ humidity + "\"";
+  json += ",\"carbonMonoxide\":\""+ carbonMonoxide + "\"";
   json += ",\"photoresistor\":\""+ photoresistor + "\"";
   json += ",\"uptime\":\"" + uptime_formatter::getUptime() + "\"";
   json += "}";
