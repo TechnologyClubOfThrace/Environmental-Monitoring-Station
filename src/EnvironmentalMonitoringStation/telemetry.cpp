@@ -22,6 +22,7 @@
  * ***********************************************************************/
 
 #include "telemetry.h"
+#include "failure_watchdog.h"
 
 //for http post request to IoT server
 #include "HTTPClient.h"
@@ -98,6 +99,14 @@ void Telemetry::send_data_to_iot_server()
   } else { 
     Serial.print("Error on sending POST: ");
     Serial.println(httpResponseCode); 
+  }
+
+  //If the http post response is not 200
+  //then report the error to the watchdog
+  if(httpResponseCode == 200){
+    FailureWatchdog::reportSuccess();
+  } else {
+    FailureWatchdog::reportError();
   }
   
   http.end();  //Free resources

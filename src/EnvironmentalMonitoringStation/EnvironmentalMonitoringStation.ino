@@ -22,8 +22,11 @@
  * ***********************************************************************/
 
 #define LED_PIN      2
+#define MQ7_CO_PIN   34 //ADC GPIO34 - Carbon Monoxide Sensor
 
 #include "WiFi.h"
+#include "failure_watchdog.h"
+#include "MQ7.h"
 
 //headers for reading temperature 
 #include <OneWire.h> 
@@ -31,38 +34,50 @@
 
 #include <limits.h>
 
+MQ7 mq7(MQ7_CO_PIN, 4.5);
+
+//BME280 atmospheric pressure and hunidity sensor (temperature sensor not used)
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
-
 Adafruit_BME280 bme280;
 
+//library that collects and sends data to the IoT server
 #include "telemetry.h"
 Telemetry telemetry;
 
+//setup code runs once at the beginning
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
 
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_PIN, OUTPUT);
 
-
+  // BME280 sensor init
   if (bme280.begin(0x76))
+  {
     Serial.println("BME280 init success");
-  else {
+
+    bme280.setSampling(Adafruit_BME280::MODE_NORMAL,
+    Adafruit_BME280::SAMPLING_NONE, // temperature sensor off
+    Adafruit_BME280::SAMPLING_X16, // pressure
+    Adafruit_BME280::SAMPLING_X16, // humidity
+    Adafruit_BME280::FILTER_X2,
+    Adafruit_BME280::STANDBY_MS_500);
+  } else {
     // Oops, something went wrong, this is usually a connection problem,
-    // see the comments at the top of this sketch for the proper connections.
     Serial.println("BMP280 init fail\n\n");
 
     //Serial.println(std::numeric_limits<unsigned long>::max());
   }
 
-  //carbon monixide sensor analog pin
-  pinMode(34, INPUT);
+  //set carbon monixide sensor analog pin for input
+  pinMode(MQ7_CO_PIN, INPUT);
 
   // Your WiFi credentials.// Set password to "" for open networks.
-  static char * ssid = "steth";
+  static char * ssid = "stethsteth";
   static char * password = "ilovecomputers";
+  Serial.println(ssid);
+ 
 
 /*
  * CONFIGURATION FOR STATIC IP -
@@ -74,20 +89,24 @@ void setup() {
   WiFi.config(ip, gateway, netmask, dns); 
   //WiFi.config(ip); 
   */
-  
+
+  //connect to the WiFi
   Serial.println("WiFi.begin(ssid, password)...");
   WiFi.begin(ssid, password);
 
   Serial.println("Starting ...");
-  delay(2000);
 }
 
 void read_carbon_monoxide()
 {
   //A0 is 36 in ESP32 (GPIO36)
-  int sensorValue = analogRead(34);
+  int sensorValue = analogRead(MQ7_CO_PIN);
   telemetry.setCarbonMonoxide(sensorValue);
   Serial.println("CarbonMonoxide is: " + (String)telemetry.getCarbonMonoxide());
+
+  float ppm = mq7.getPPM();
+  Serial.println(ppm);
+  
 
 /*
   float R0 = 7200.0;
@@ -108,7 +127,7 @@ void read_carbon_monoxide()
 void read_temperature()
 {
   // temperature Data wire is plugged into pin 13 on the Arduino
-  static const byte ONE_WIRE_BUS = 15;
+  static const byte ONE_WIRE_BUS = 4;
   // 9 - 12 precision
   static const byte TEMPERATURE_PRECISION = 12;
   
@@ -155,12 +174,14 @@ void connect_to_wifi()
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
       Serial.println("Connecting to WiFi..");
+      FailureWatchdog::reportError();
     }
   }
 
   Serial.println("Connected to the WiFi network.");
   Serial.print("WiFi IP address: ");
   Serial.println(WiFi.localIP());
+  FailureWatchdog::reportSuccess();
 }
 
 void loop() {
@@ -189,5 +210,6 @@ void loop() {
   telemetry.send_data_to_iot_server();
 
   Serial.println("\n");
+  //wait 5sec to read next sensor data
   delay(5000);
 }
