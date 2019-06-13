@@ -59,6 +59,11 @@ void Telemetry::setCarbonMonoxide(float carbonMonoxide)
   m_carbonMonoxide = carbonMonoxide;
 }
 
+void Telemetry::setPMS7003_MP_1(float mp_1)
+{
+  m_PMS7003_MP_1 = mp_1;
+}
+
 float Telemetry::getTemperatureCelcius()
 {
   return m_temperature_celcius;
@@ -82,6 +87,11 @@ float Telemetry::getHumidity()
 float Telemetry::getCarbonMonoxide()
 {
   return m_carbonMonoxide;
+}
+
+float Telemetry::getPMS7003_MP_1()
+{
+  return m_PMS7003_MP_1;
 }
 
 void Telemetry::send_data_to_iot_server()
@@ -116,17 +126,19 @@ String Telemetry::getTelemetryJson()
 {
   String json;
 
-  String temperature = (String)getTemperatureCelcius();
-  String pressure = (String)getBarometricPressure();
-  String humidity = (String)getHumidity();
-  String carbonMonoxide = (String)getCarbonMonoxide();
-  String photoresistor = (String)getPhotoresistor();
+  String temperature    =  (String)getTemperatureCelcius();
+  String pressure       =  (String)getBarometricPressure();
+  String humidity       =  (String)getHumidity();
+  String carbonMonoxide =  (String)getCarbonMonoxide();
+  String photoresistor  =  (String)getPhotoresistor();
+  String PMS7003_MP_1   =  (String)getPMS7003_MP_1();
   
   json += "{";
   json += "\"temperature\":\""+ temperature +"\"";
   json += ",\"pressure\":\""+ pressure + "\"";
   json += ",\"humidity\":\""+ humidity + "\"";
   json += ",\"carbonMonoxide\":\""+ carbonMonoxide + "\"";
+  json += ",\"PMS7003_MP_1\":\""+ PMS7003_MP_1 + "\"";
   json += ",\"photoresistor\":\""+ photoresistor + "\"";
   json += ",\"uptime\":\"" + uptime_formatter::getUptime() + "\"";
   json += "}";

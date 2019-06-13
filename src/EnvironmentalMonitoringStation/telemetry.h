@@ -30,12 +30,14 @@ class Telemetry
     void setTemperatureCelcius(float temperature_celcius);
     void setPhotoresistor(float photoresistor);
     void setBarometricPressure(float barometricPressure);
+    void setPMS7003_MP_1(float mp_1);
     void setHumidity(float humidity);
     void setCarbonMonoxide(float carbonMonoxide);
     
     float getTemperatureCelcius();
     float getPhotoresistor();
     float getBarometricPressure();
+    float getPMS7003_MP_1();
     float getHumidity();
     float getCarbonMonoxide();
     String getTelemetryJson();
@@ -48,4 +50,5 @@ class Telemetry
     float m_barometricPressure = -300;
     float m_humidity = -300;
     float m_carbonMonoxide = -300;
+    float m_PMS7003_MP_1 = -300;
 };

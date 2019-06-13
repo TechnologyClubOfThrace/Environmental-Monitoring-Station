@@ -28,6 +28,11 @@
 #include "failure_watchdog.h"
 #include "MQ7.h"
 
+#include "PMS.h"
+PMS pms(Serial2);
+PMS::DATA data;
+
+
 //headers for reading temperature 
 #include <OneWire.h> 
 #include <DallasTemperature.h>
@@ -48,6 +53,9 @@ Telemetry telemetry;
 //setup code runs once at the beginning
 void setup() {
   Serial.begin(115200);
+
+  //PMS7003 Serial - UART2
+  Serial2.begin(PMS::BAUD_RATE);
 
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_PIN, OUTPUT);
@@ -74,7 +82,7 @@ void setup() {
   pinMode(MQ7_CO_PIN, INPUT);
 
   // Your WiFi credentials.// Set password to "" for open networks.
-  static char * ssid = "stethsteth";
+  static char * ssid     = "steth";
   static char * password = "ilovecomputers";
   Serial.println(ssid);
  
@@ -184,12 +192,47 @@ void connect_to_wifi()
   FailureWatchdog::reportSuccess();
 }
 
+void read_pms7003_data()
+{
+  Serial.println("Waking up, wait 30 seconds for stable readings...");
+  pms.wakeUp();
+  delay(30000);
+
+  Serial.println("Send read request...");
+  pms.requestRead();
+
+  Serial.println("Wait max. 1 second for read...");
+  if (pms.readUntil(data))
+  {
+    telemetry.setPMS7003_MP_1(data.PM_AE_UG_1_0);
+    Serial.print("PM 1.0 (ug/m3): ");
+    Serial.println(telemetry.getPMS7003_MP_1());
+
+    Serial.print("PM 2.5 (ug/m3): ");
+    Serial.println(data.PM_AE_UG_2_5);
+
+    Serial.print("PM 10.0 (ug/m3): ");
+    Serial.println(data.PM_AE_UG_10_0);
+  }
+  else
+  {
+    Serial.println("No data.");
+  }
+
+  Serial.println("Going to sleep for 60 seconds.");
+  pms.sleep();
+  delay(60000);
+}
+
 void loop() {
   Serial.println("Begin loop");
   
   //connects to the wifi if not connected.
   //Returns only when a wifi connection is established.
   connect_to_wifi();
+
+  //reads pms7003 data
+  read_pms7003_data();
 
   //reads the temperature from the sensor
   read_temperature();
