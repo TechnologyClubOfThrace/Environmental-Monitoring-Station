@@ -64,6 +64,16 @@ void Telemetry::setPMS7003_MP_1(float mp_1)
   m_PMS7003_MP_1 = mp_1;
 }
 
+void Telemetry::setPMS7003_MP_2_5(float mp_2_5)
+{
+  m_PMS7003_MP_2_5 = mp_2_5;
+}
+
+void Telemetry::setPMS7003_MP_10(float mp_10)
+{
+  m_PMS7003_MP_10 = mp_10;
+}
+
 float Telemetry::getTemperatureCelcius()
 {
   return m_temperature_celcius;
@@ -92,6 +102,16 @@ float Telemetry::getCarbonMonoxide()
 float Telemetry::getPMS7003_MP_1()
 {
   return m_PMS7003_MP_1;
+}
+
+float Telemetry::getPMS7003_MP_2_5()
+{
+  return m_PMS7003_MP_2_5;
+}
+
+float Telemetry::getPMS7003_MP_10()
+{
+  return m_PMS7003_MP_10;
 }
 
 void Telemetry::send_data_to_iot_server()
@@ -132,6 +152,8 @@ String Telemetry::getTelemetryJson()
   String carbonMonoxide =  (String)getCarbonMonoxide();
   String photoresistor  =  (String)getPhotoresistor();
   String PMS7003_MP_1   =  (String)getPMS7003_MP_1();
+  String PMS7003_MP_2_5 =  (String)getPMS7003_MP_2_5();
+  String PMS7003_MP_10  =  (String)getPMS7003_MP_10();
   
   json += "{";
   json += "\"temperature\":\""+ temperature +"\"";
@@ -139,6 +161,8 @@ String Telemetry::getTelemetryJson()
   json += ",\"humidity\":\""+ humidity + "\"";
   json += ",\"carbonMonoxide\":\""+ carbonMonoxide + "\"";
   json += ",\"PMS7003_MP_1\":\""+ PMS7003_MP_1 + "\"";
+  json += ",\"PMS7003_MP_2_5\":\""+ PMS7003_MP_2_5 + "\"";
+  json += ",\"PMS7003_MP_10\":\""+ PMS7003_MP_10 + "\"";
   json += ",\"photoresistor\":\""+ photoresistor + "\"";
   json += ",\"uptime\":\"" + uptime_formatter::getUptime() + "\"";
   json += "}";

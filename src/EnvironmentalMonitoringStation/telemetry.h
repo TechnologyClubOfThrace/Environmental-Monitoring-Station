@@ -31,6 +31,8 @@ class Telemetry
     void setPhotoresistor(float photoresistor);
     void setBarometricPressure(float barometricPressure);
     void setPMS7003_MP_1(float mp_1);
+    void setPMS7003_MP_2_5(float mp_2_5);
+    void setPMS7003_MP_10(float mp_10);
     void setHumidity(float humidity);
     void setCarbonMonoxide(float carbonMonoxide);
     
@@ -38,6 +40,8 @@ class Telemetry
     float getPhotoresistor();
     float getBarometricPressure();
     float getPMS7003_MP_1();
+    float getPMS7003_MP_2_5();
+    float getPMS7003_MP_10();
     float getHumidity();
     float getCarbonMonoxide();
     String getTelemetryJson();
@@ -51,4 +55,6 @@ class Telemetry
     float m_humidity = -300;
     float m_carbonMonoxide = -300;
     float m_PMS7003_MP_1 = -300;
+    float m_PMS7003_MP_2_5 = -300;
+    float m_PMS7003_MP_10 = -300;
 };
