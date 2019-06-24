@@ -21,7 +21,8 @@
  * along with Environmental Monitoring Station.  If not, see <http://www.gnu.org/licenses/>.
  * ***********************************************************************/
 
-#define DISABLE_PMS7003 = false; // if true, disables PMS7003 sensor and delay
+//#define DISABLE_PMS7003; // if defined, disables PMS7003 sensor and delay
+
 #define LED_PIN      2
 #define MQ7_CO_PIN   39 //ADC GPIO34 - Carbon Monoxide Sensor
 
@@ -122,24 +123,14 @@ long double mypow(float v, float p)
 
 void read_carbon_monoxide()
 {
-  //A0 is 36 in ESP32 (GPIO36)
-  //int sensorValue = analogRead(MQ7_CO_PIN);
-  //telemetry.setCarbonMonoxide(sensorValue);
-  //Serial.println("CarbonMonoxide is: " + (String)telemetry.getCarbonMonoxide());
-
-
-  //analog read
+  //analog read 
   int sensorValue = analogRead(MQ7_CO_PIN);
-  Serial.print("MQ7: ");
-  Serial.println(sensorValue);
-
  
   //read R0 resistanse
   static float R0_ok = false;
-  static float R0 = 4100;
+  static float R0 = 4100; //used for sensor calibration
   static float sensor_volt = 0;
   static float RS_gas = 0;
-
 
   /*
   if (true){
@@ -152,7 +143,6 @@ void read_carbon_monoxide()
     R0_ok = true;
   }
   */
-  
 
    sensor_volt = ((float)sensorValue/4) / 1024 * 5.0;
    RS_gas = (5.0 - sensor_volt) / sensor_volt;
@@ -160,8 +150,8 @@ void read_carbon_monoxide()
    float x = 1538.46 * ratio;
    float ppm = mypow(x, -1.709);
    telemetry.setCarbonMonoxide(ppm);
-   Serial.print("PPM: ");
-   Serial.println(ppm);
+   Serial.println("Carbon Monoxide is: " + (String)telemetry.getCarbonMonoxide() +" ppm");
+
    
 }
 
@@ -221,7 +211,7 @@ void read_pms7003_data()
     return;
   #endif
   
-  Serial.println("Waking up, wait 30 seconds for stable readings...");
+  Serial.println("Waking up PMS7003, wait 30 seconds for stable readings...");
   pms.wakeUp();
   delay(30000);
 
