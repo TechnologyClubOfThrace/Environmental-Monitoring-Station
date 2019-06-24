@@ -134,13 +134,13 @@ String Telemetry::getTelemetryJson()
   String PMS7003_MP_1   =  (String)getPMS7003_MP_1();
   
   json += "{";
-  json += "\"temperature\":\""+ temperature +"\"";
-  json += ",\"pressure\":\""+ pressure + "\"";
-  json += ",\"humidity\":\""+ humidity + "\"";
-  json += ",\"carbonMonoxide\":\""+ carbonMonoxide + "\"";
-  json += ",\"PMS7003_MP_1\":\""+ PMS7003_MP_1 + "\"";
-  json += ",\"photoresistor\":\""+ photoresistor + "\"";
-  json += ",\"uptime\":\"" + uptime_formatter::getUptime() + "\"";
+  json += "\"temperature\":\""    + temperature                   + "\"";
+  json += ",\"pressure\":\""      + pressure                      + "\"";
+  json += ",\"humidity\":\""      + humidity                      + "\"";
+  json += ",\"carbonMonoxide\":\""+ carbonMonoxide                + "\"";
+  json += ",\"PMS7003_MP_1\":\""  + PMS7003_MP_1                  + "\"";
+  json += ",\"photoresistor\":\"" + photoresistor                 + "\"";
+  json += ",\"uptime\":\""        + uptime_formatter::getUptime() + "\"";
   json += "}";
 
   Serial.println("Uptime: " + uptime_formatter::getUptime());

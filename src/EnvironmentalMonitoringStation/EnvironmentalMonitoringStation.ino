@@ -21,8 +21,9 @@
  * along with Environmental Monitoring Station.  If not, see <http://www.gnu.org/licenses/>.
  * ***********************************************************************/
 
+#define DISABLE_PMS7003 = false; // if true, disables PMS7003 sensor and delay
 #define LED_PIN      2
-#define MQ7_CO_PIN   34 //ADC GPIO34 - Carbon Monoxide Sensor
+#define MQ7_CO_PIN   39 //ADC GPIO34 - Carbon Monoxide Sensor
 
 #include "WiFi.h"
 #include "failure_watchdog.h"
@@ -38,8 +39,7 @@ PMS::DATA data;
 #include <DallasTemperature.h>
 
 #include <limits.h>
-
-MQ7 mq7(MQ7_CO_PIN, 4.5);
+MQ7 mq7(MQ7_CO_PIN, 5.0);
 
 //BME280 atmospheric pressure and hunidity sensor (temperature sensor not used)
 #include <Adafruit_Sensor.h>
@@ -63,7 +63,7 @@ void setup() {
   // BME280 sensor init
   if (bme280.begin(0x76))
   {
-    Serial.println("BME280 init success");
+    Serial.println("BME2800 init success");
 
     bme280.setSampling(Adafruit_BME280::MODE_NORMAL,
     Adafruit_BME280::SAMPLING_NONE, // temperature sensor off
@@ -105,31 +105,62 @@ void setup() {
   Serial.println("Starting ...");
 }
 
+long double mypow(float v, float p)
+{
+    int sign=1;
+    float r;
+    if (v<0)
+    {
+        sign = (-1);
+        v *= sign;
+    }
+    r = pow(v, p);
+    return (r*sign);
+}
+
 void read_carbon_monoxide()
 {
   //A0 is 36 in ESP32 (GPIO36)
-  int sensorValue = analogRead(MQ7_CO_PIN);
-  telemetry.setCarbonMonoxide(sensorValue);
-  Serial.println("CarbonMonoxide is: " + (String)telemetry.getCarbonMonoxide());
+  //int sensorValue = analogRead(MQ7_CO_PIN);
+  //telemetry.setCarbonMonoxide(sensorValue);
+  //Serial.println("CarbonMonoxide is: " + (String)telemetry.getCarbonMonoxide());
 
-  float ppm = mq7.getPPM();
-  Serial.println(ppm);
+
+  //analog read
+  int sensorValue = analogRead(MQ7_CO_PIN);
+  Serial.print("MQ7: ");
+  Serial.println(sensorValue);
+
+ 
+  //read R0 resistanse
+  static float R0_ok = false;
+  static float R0 = 4100;
+  static float sensor_volt = 0;
+  static float RS_gas = 0;
+
+
+  /*
+  if (true){
+    int R2 = 2000;
+    sensor_volt = (float)sensorValue / 4096 * 5.0;
+    RS_gas = ((5.0 * R2) / sensor_volt) - R2;
+    R0 = RS_gas / 1;
+    Serial.print("R0: ");
+    Serial.println(R0);
+    R0_ok = true;
+  }
+  */
   
 
-/*
-  float R0 = 7200.0;
-  float sensor_volt = sensorValue / (1024.0 * 5.0);
-  Serial.println("sensor_volt:" + (String)sensor_volt);
-  float RS_gas = (5.0 - sensor_volt) / sensor_volt;
-  Serial.println("RS_gas:" + (String)RS_gas);
-  float ratio = RS_gas / R0; //Replace R0 with the value found using the sketch above
-  Serial.println("ratio:" + (String)ratio);
-  float x = 1538.46 * ratio;
-  Serial.println("x:" + (String)x);
-  float ppm = pow (x, -1.709);
-  Serial.print("PPM: ");
-  Serial.println((String)ppm);
-  */
+   sensor_volt = ((float)sensorValue/4) / 1024 * 5.0;
+   RS_gas = (5.0 - sensor_volt) / sensor_volt;
+   float ratio = RS_gas / R0; //Replace R0 with the value found using the sketch above
+   float x = 1538.46 * ratio;
+   float ppm = mypow(x, -1.709);
+   telemetry.setCarbonMonoxide(ppm);
+   Serial.print("PPM: ");
+   Serial.println(ppm);
+   
 }
 
 void read_temperature()
@@ -151,16 +182,6 @@ void read_temperature()
   telemetry.setTemperatureCelcius(temperature_sensors.getTempCByIndex(0));
   Serial.println(telemetry.getTemperatureCelcius());
 }
-
-/*
-void read_photoresistor()
-{
-  telemetry.setPhotoresistor(analogRead(34));
-  Serial.print("Photoresistor is: ");
-  Serial.println(telemetry.getPhotoresistor());
-}
-*/
-
 
 void read_barometric_pressure()
 {
@@ -194,6 +215,10 @@ void connect_to_wifi()
 
 void read_pms7003_data()
 {
+  #ifdef DISABLE_PMS7003
+    return;
+  #endif
+  
   Serial.println("Waking up, wait 30 seconds for stable readings...");
   pms.wakeUp();
   delay(30000);
@@ -245,10 +270,7 @@ void loop() {
   
   //reads the carbon monoxide value from the MQ-7 sensor
   read_carbon_monoxide();
-
-  //reads the photoresistor value from the sensor
-  //read_photoresistor();
-
+  
   //sends all sensor data to the iot server
   telemetry.send_data_to_iot_server();
 
