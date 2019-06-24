@@ -31,7 +31,7 @@
 
 Telemetry::Telemetry()
 {
-  
+
 }
 
 void Telemetry::setTemperatureCelcius(float temperature_celcius)
@@ -64,6 +64,16 @@ void Telemetry::setPMS7003_MP_1(float mp_1)
   m_PMS7003_MP_1 = mp_1;
 }
 
+void Telemetry::setPMS7003_MP_2_5(float mp_2_5)
+{
+  m_PMS7003_MP_2_5 = mp_2_5;
+}
+
+void Telemetry::setPMS7003_MP_10(float mp_10)
+{
+  m_PMS7003_MP_10 = mp_10;
+}
+
 float Telemetry::getTemperatureCelcius()
 {
   return m_temperature_celcius;
@@ -94,21 +104,31 @@ float Telemetry::getPMS7003_MP_1()
   return m_PMS7003_MP_1;
 }
 
+float Telemetry::getPMS7003_MP_2_5()
+{
+  return m_PMS7003_MP_2_5;
+}
+
+float Telemetry::getPMS7003_MP_10()
+{
+  return m_PMS7003_MP_10;
+}
+
 void Telemetry::send_data_to_iot_server()
 {
-  HTTPClient http; 
+  HTTPClient http;
   http.begin("http://chat.steth.gr:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
-  http.addHeader("Content-Type", "application/json"); //Specify content-type header 
- 
+  http.addHeader("Content-Type", "application/json"); //Specify content-type header
+
   int httpResponseCode = http.POST(getTelemetryJson()); //Send the actual POST request
-  
+
   if(httpResponseCode > 0){
-    String response = http.getString();  //Get the response to the request 
+    String response = http.getString();  //Get the response to the request
     Serial.println("HTTP POST response code: " + (String)httpResponseCode);   //Print return code
     Serial.println(response);           //Print request answer
-  } else { 
+  } else {
     Serial.print("Error on sending POST: ");
-    Serial.println(httpResponseCode); 
+    Serial.println(httpResponseCode);
   }
 
   //If the http post response is not 200
@@ -118,7 +138,7 @@ void Telemetry::send_data_to_iot_server()
   } else {
     FailureWatchdog::reportError();
   }
-  
+
   http.end();  //Free resources
 }
 
@@ -132,15 +152,19 @@ String Telemetry::getTelemetryJson()
   String carbonMonoxide =  (String)getCarbonMonoxide();
   String photoresistor  =  (String)getPhotoresistor();
   String PMS7003_MP_1   =  (String)getPMS7003_MP_1();
-  
+  String PMS7003_MP_2_5 =  (String)getPMS7003_MP_2_5();
+  String PMS7003_MP_10  =  (String)getPMS7003_MP_10();
+
   json += "{";
-  json += "\"temperature\":\""    + temperature                   + "\"";
-  json += ",\"pressure\":\""      + pressure                      + "\"";
-  json += ",\"humidity\":\""      + humidity                      + "\"";
-  json += ",\"carbonMonoxide\":\""+ carbonMonoxide                + "\"";
-  json += ",\"PMS7003_MP_1\":\""  + PMS7003_MP_1                  + "\"";
-  json += ",\"photoresistor\":\"" + photoresistor                 + "\"";
-  json += ",\"uptime\":\""        + uptime_formatter::getUptime() + "\"";
+  json += "\"temperature\":\""+ temperature +"\"";
+  json += ",\"pressure\":\""+ pressure + "\"";
+  json += ",\"humidity\":\""+ humidity + "\"";
+  json += ",\"carbonMonoxide\":\""+ carbonMonoxide + "\"";
+  json += ",\"PMS7003_MP_1\":\""+ PMS7003_MP_1 + "\"";
+  json += ",\"PMS7003_MP_2_5\":\""+ PMS7003_MP_2_5 + "\"";
+  json += ",\"PMS7003_MP_10\":\""+ PMS7003_MP_10 + "\"";
+  json += ",\"photoresistor\":\""+ photoresistor + "\"";
+  json += ",\"uptime\":\"" + uptime_formatter::getUptime() + "\"";
   json += "}";
 
   Serial.println("Uptime: " + uptime_formatter::getUptime());

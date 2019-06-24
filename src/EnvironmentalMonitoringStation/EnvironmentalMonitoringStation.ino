@@ -44,7 +44,9 @@ MQ7 mq7(MQ7_CO_PIN, 5.0);
 //BME280 atmospheric pressure and hunidity sensor (temperature sensor not used)
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
+#define SEALEVELPRESSURE_HPA (1013.25)
 Adafruit_BME280 bme280;
+
 
 //library that collects and sends data to the IoT server
 #include "telemetry.h"
@@ -232,16 +234,21 @@ void read_pms7003_data()
     telemetry.setPMS7003_MP_1(data.PM_AE_UG_1_0);
     Serial.print("PM 1.0 (ug/m3): ");
     Serial.println(telemetry.getPMS7003_MP_1());
-
+    
+    telemetry.setPMS7003_MP_2_5(data.PM_AE_UG_2_5);
     Serial.print("PM 2.5 (ug/m3): ");
-    Serial.println(data.PM_AE_UG_2_5);
-
+    Serial.println(telemetry.getPMS7003_MP_2_5());
+    
+    telemetry.setPMS7003_MP_10(data.PM_AE_UG_10_0);
     Serial.print("PM 10.0 (ug/m3): ");
-    Serial.println(data.PM_AE_UG_10_0);
+    Serial.println(telemetry.getPMS7003_MP_10());
   }
   else
   {
     Serial.println("No data.");
+    telemetry.setPMS7003_MP_1(-300);
+    telemetry.setPMS7003_MP_2_5(-300);
+    telemetry.setPMS7003_MP_10(-300);
   }
 
   Serial.println("Going to sleep for 60 seconds.");
