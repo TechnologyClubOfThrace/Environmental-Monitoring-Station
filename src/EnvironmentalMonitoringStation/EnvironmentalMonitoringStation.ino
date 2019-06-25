@@ -24,6 +24,8 @@
 //conditional variables for various purposes
 //#define DISABLE_PMS7003 // if defined, disables PMS7003 sensor and delay
 
+//the board should support an ADC resolution of 12bits
+//TODO: check if there is a constant to get the ADC resolution of the board at compile time
 static const unsigned int ADC_RESOLUTION = 4096;
 
 #define LED_PIN      2
@@ -80,7 +82,7 @@ void setup() {
   } else {
     // Oops, something went wrong, this is usually a connection problem,
     Serial.println("BMP280 init fail\n\n");
-
+    
     //Serial.println(std::numeric_limits<unsigned long>::max());
   }
 
@@ -193,7 +195,7 @@ void read_humidity()
 void connect_to_wifi()
 {
   if(WiFi.status() != WL_CONNECTED){
-    //WiFi.reconnect();
+    WiFi.reconnect();
     
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
@@ -251,10 +253,6 @@ void read_pms7003_data()
 
 void loop() {
   Serial.println("Begin loop");
-  
-  //connects to the wifi if not connected.
-  //Returns only when a wifi connection is established.
-  connect_to_wifi();
 
   //reads pms7003 data
   read_pms7003_data();
@@ -270,6 +268,10 @@ void loop() {
   
   //reads the carbon monoxide value from the MQ-7 sensor
   read_carbon_monoxide();
+
+  //connects to the wifi if not connected.
+  //Returns only when a wifi connection is established.
+  connect_to_wifi();
   
   //sends all sensor data to the iot server
   telemetry.send_data_to_iot_server();
