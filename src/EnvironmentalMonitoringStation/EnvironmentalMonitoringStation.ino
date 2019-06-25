@@ -21,7 +21,10 @@
  * along with Environmental Monitoring Station.  If not, see <http://www.gnu.org/licenses/>.
  * ***********************************************************************/
 
-//#define DISABLE_PMS7003; // if defined, disables PMS7003 sensor and delay
+//conditional variables for various purposes
+//#define DISABLE_PMS7003 // if defined, disables PMS7003 sensor and delay
+
+static const unsigned int ADC_RESOLUTION = 4096;
 
 #define LED_PIN      2
 #define MQ7_CO_PIN   39 //ADC GPIO34 - Carbon Monoxide Sensor
@@ -128,7 +131,7 @@ void read_carbon_monoxide()
  
   //read R0 resistanse
   static float R0_ok = false;
-  static float R0 = 4100; //used for sensor calibration
+  static float R0 = 7000; //used for sensor calibration
   static float sensor_volt = 0;
   static float RS_gas = 0;
 
@@ -144,7 +147,7 @@ void read_carbon_monoxide()
   }
   */
 
-   sensor_volt = ((float)sensorValue/4) / 1024 * 5.0;
+   sensor_volt = ((float)sensorValue / 4) / ADC_RESOLUTION * 5.0;
    RS_gas = (5.0 - sensor_volt) / sensor_volt;
    float ratio = RS_gas / R0; //Replace R0 with the value found using the sketch above
    float x = 1538.46 * ratio;
