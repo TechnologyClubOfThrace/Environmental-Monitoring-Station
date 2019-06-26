@@ -133,7 +133,7 @@ void read_carbon_monoxide()
  
   //read R0 resistanse
   static float R0_ok = false;
-  static float R0 = 7000; //used for sensor calibration
+  static const float R0 = 7000; //used for sensor calibration
   static float sensor_volt = 0;
   static float RS_gas = 0;
 
@@ -246,9 +246,8 @@ void read_pms7003_data()
     telemetry.setPMS7003_MP_10(-300);
   }
 
-  Serial.println("Going to sleep for 60 seconds.");
+  Serial.println("PMS7003 going to sleep.");
   pms.sleep();
-  delay(60000);
 }
 
 void loop() {
@@ -276,7 +275,9 @@ void loop() {
   //sends all sensor data to the iot server
   telemetry.send_data_to_iot_server();
 
+  //wait 60sec to read next sensor data
+  static const unsigned int DEVICE_DELAY_MS = 60000;
+  Serial.println("Delay for: " + (String)(DEVICE_DELAY_MS / 1000) + " sec");
   Serial.println("\n");
-  //wait 5sec to read next sensor data
-  delay(5000);
+  delay(DEVICE_DELAY_MS);
 }
