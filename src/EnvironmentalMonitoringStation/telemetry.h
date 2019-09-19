@@ -35,6 +35,7 @@ class Telemetry
     void setPMS7003_MP_10(float mp_10);
     void setHumidity(float humidity);
     void setCarbonMonoxide(float carbonMonoxide);
+    void setCarbonDioxide(float carbonDioxide);
     
     float getTemperatureCelcius();
     float getPhotoresistor();
@@ -44,6 +45,7 @@ class Telemetry
     float getPMS7003_MP_10();
     float getHumidity();
     float getCarbonMonoxide();
+    float getCarbonDioxide();
     String getTelemetryJson();
     
     void send_data_to_iot_server();
@@ -54,6 +56,7 @@ class Telemetry
     float m_barometricPressure = -300;
     float m_humidity = -300;
     float m_carbonMonoxide = -300;
+    float m_carbonDioxide = -300;
     float m_PMS7003_MP_1 = -300;
     float m_PMS7003_MP_2_5 = -300;
     float m_PMS7003_MP_10 = -300;

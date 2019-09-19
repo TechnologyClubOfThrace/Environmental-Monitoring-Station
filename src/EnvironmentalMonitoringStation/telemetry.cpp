@@ -59,6 +59,11 @@ void Telemetry::setCarbonMonoxide(float carbonMonoxide)
   m_carbonMonoxide = carbonMonoxide;
 }
 
+void Telemetry::setCarbonDioxide(float carbonDioxide)
+{
+  m_carbonDioxide = carbonDioxide;
+}
+
 void Telemetry::setPMS7003_MP_1(float mp_1)
 {
   m_PMS7003_MP_1 = mp_1;
@@ -97,6 +102,11 @@ float Telemetry::getHumidity()
 float Telemetry::getCarbonMonoxide()
 {
   return m_carbonMonoxide;
+}
+
+float Telemetry::getCarbonDioxide()
+{
+  return m_carbonDioxide;
 }
 
 float Telemetry::getPMS7003_MP_1()
@@ -150,6 +160,7 @@ String Telemetry::getTelemetryJson()
   String pressure       =  (String)getBarometricPressure();
   String humidity       =  (String)getHumidity();
   String carbonMonoxide =  (String)getCarbonMonoxide();
+  String carbonDioxide =  (String)getCarbonDioxide();
   String photoresistor  =  (String)getPhotoresistor();
   String PMS7003_MP_1   =  (String)getPMS7003_MP_1();
   String PMS7003_MP_2_5 =  (String)getPMS7003_MP_2_5();
@@ -160,6 +171,7 @@ String Telemetry::getTelemetryJson()
   json += ",\"pressure\":\""+ pressure + "\"";
   json += ",\"humidity\":\""+ humidity + "\"";
   json += ",\"carbonMonoxide\":\""+ carbonMonoxide + "\"";
+  json += ",\"carbonDioxide\":\""+ carbonDioxide + "\"";
   json += ",\"PMS7003_MP_1\":\""+ PMS7003_MP_1 + "\"";
   json += ",\"PMS7003_MP_2_5\":\""+ PMS7003_MP_2_5 + "\"";
   json += ",\"PMS7003_MP_10\":\""+ PMS7003_MP_10 + "\"";

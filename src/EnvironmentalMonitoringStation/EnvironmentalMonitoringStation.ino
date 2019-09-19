@@ -23,6 +23,8 @@
 
 //conditional variables for various purposes
 //#define DISABLE_PMS7003 // if defined, disables PMS7003 sensor and delay
+#define DEBUG_FAST_LOOP
+#define USE_UART0
 
 //the board should support an ADC resolution of 12bits
 //TODO: check if there is a constant to get the ADC resolution of the board at compile time
@@ -35,9 +37,11 @@ static const unsigned int ADC_RESOLUTION = 4096;
 #include "failure_watchdog.h"
 #include "MQ7.h"
 
+#ifndef DISABLE_PMS7003
 #include "PMS.h"
-PMS pms(Serial2);
+PMS pms(Serial);
 PMS::DATA data;
+#endif
 
 
 //headers for reading temperature 
@@ -60,10 +64,15 @@ Telemetry telemetry;
 
 //setup code runs once at the beginning
 void setup() {
-  Serial.begin(115200);
-
+  
+  #ifndef DISABLE_PMS7003
   //PMS7003 Serial - UART2
-  Serial2.begin(PMS::BAUD_RATE);
+  Serial.begin(PMS::BAUD_RATE);
+  #else
+  Serial.begin(115200);
+  #endif
+  
+  Serial2.begin(9600);
 
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_PIN, OUTPUT);
@@ -71,7 +80,9 @@ void setup() {
   // BME280 sensor init
   if (bme280.begin(0x76))
   {
+    #ifdef DISABLE_PMS7003
     Serial.println("BME2800 init success");
+    #endif
 
     bme280.setSampling(Adafruit_BME280::MODE_NORMAL,
     Adafruit_BME280::SAMPLING_NONE, // temperature sensor off
@@ -81,8 +92,9 @@ void setup() {
     Adafruit_BME280::STANDBY_MS_500);
   } else {
     // Oops, something went wrong, this is usually a connection problem,
+    #ifdef DISABLE_PMS7003
     Serial.println("BMP280 init fail\n\n");
-    
+    #endif
     //Serial.println(std::numeric_limits<unsigned long>::max());
   }
 
@@ -92,7 +104,9 @@ void setup() {
   // Your WiFi credentials.// Set password to "" for open networks.
   static char * ssid     = "steth";
   static char * password = "ilovecomputers";
+  #ifdef DISABLE_PMS7003
   Serial.println(ssid);
+  #endif
  
 
 /*
@@ -107,10 +121,14 @@ void setup() {
   */
 
   //connect to the WiFi
+  #ifdef DISABLE_PMS7003
   Serial.println("WiFi.begin(ssid, password)...");
+  #endif
   WiFi.begin(ssid, password);
 
+  #ifdef DISABLE_PMS7003
   Serial.println("Starting ...");
+  #endif
 }
 
 long double mypow(float v, float p)
@@ -155,7 +173,9 @@ void read_carbon_monoxide()
    float x = 1538.46 * ratio;
    float ppm = mypow(x, -1.709);
    telemetry.setCarbonMonoxide(ppm);
+   #ifdef DISABLE_PMS7003
    Serial.println("Carbon Monoxide is: " + (String)telemetry.getCarbonMonoxide() +" ppm");
+   #endif
 
    
 }
@@ -172,24 +192,34 @@ void read_temperature()
   static OneWire oneWire(ONE_WIRE_BUS); 
   // Pass our oneWire reference to Dallas Temperature. 
   static DallasTemperature temperature_sensors(&oneWire);
-  
+
+  #ifdef DISABLE_PMS7003
   Serial.println("Requesting temperatures...");
+  #endif
   temperature_sensors.requestTemperatures(); // Send the command to get temperature readings
+  #ifdef DISABLE_PMS7003
   Serial.print("Temperature is: ");
+  #endif
   telemetry.setTemperatureCelcius(temperature_sensors.getTempCByIndex(0));
+  #ifdef DISABLE_PMS7003
   Serial.println(telemetry.getTemperatureCelcius());
+  #endif
 }
 
 void read_barometric_pressure()
 {
   telemetry.setBarometricPressure(bme280.readPressure() / 100);
+  #ifdef DISABLE_PMS7003
   Serial.println("Barometric pressure is: " + (String)telemetry.getBarometricPressure() + " hPa");
+  #endif
 }
 
 void read_humidity()
 {
   telemetry.setHumidity(bme280.readHumidity());
+  #ifdef DISABLE_PMS7003
   Serial.println("Humidity is: " + (String)telemetry.getHumidity() + " %");
+  #endif
 }
 
 void connect_to_wifi()
@@ -199,62 +229,106 @@ void connect_to_wifi()
     
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
+      #ifdef DISABLE_PMS7003
       Serial.println("Connecting to WiFi..");
+      #endif
       FailureWatchdog::reportError();
     }
   }
 
+  #ifdef DISABLE_PMS7003
   Serial.println("Connected to the WiFi network.");
   Serial.print("WiFi IP address: ");
+  #endif
   Serial.println(WiFi.localIP());
   FailureWatchdog::reportSuccess();
 }
 
+#ifndef DISABLE_PMS7003
 void read_pms7003_data()
 {
-  #ifdef DISABLE_PMS7003
-    return;
-  #endif
   
-  Serial.println("Waking up PMS7003, wait 30 seconds for stable readings...");
+  //Serial.println("Waking up PMS7003, wait 30 seconds for stable readings...");
   pms.wakeUp();
+  #ifdef DEBUG_FAST_LOOP
+  delay(3000);
+  #else
   delay(30000);
+  #endif
 
-  Serial.println("Send read request...");
+  //Serial.println("Send read requestÂ...");
   pms.requestRead();
 
-  Serial.println("Wait max. 1 second for read...");
+  //Serial.println("Wait max. 1 second for read...");
   if (pms.readUntil(data))
   {
     telemetry.setPMS7003_MP_1(data.PM_AE_UG_1_0);
-    Serial.print("PM 1.0 (ug/m3): ");
-    Serial.println(telemetry.getPMS7003_MP_1());
+    //Serial.print("PM 1.0 (ug/m3): ");
+    //Serial.println(telemetry.getPMS7003_MP_1());
     
     telemetry.setPMS7003_MP_2_5(data.PM_AE_UG_2_5);
-    Serial.print("PM 2.5 (ug/m3): ");
-    Serial.println(telemetry.getPMS7003_MP_2_5());
+    //Serial.print("PM 2.5 (ug/m3): ");
+    //Serial.println(telemetry.getPMS7003_MP_2_5());
     
     telemetry.setPMS7003_MP_10(data.PM_AE_UG_10_0);
-    Serial.print("PM 10.0 (ug/m3): ");
-    Serial.println(telemetry.getPMS7003_MP_10());
+    //Serial.print("PM 10.0 (ug/m3): ");
+    //Serial.println(telemetry.getPMS7003_MP_10());
   }
   else
   {
-    Serial.println("No data.");
+    //Serial.println("No data.");
     telemetry.setPMS7003_MP_1(-300);
     telemetry.setPMS7003_MP_2_5(-300);
     telemetry.setPMS7003_MP_10(-300);
   }
 
-  Serial.println("PMS7003 going to sleep.");
+  //Serial.println("PMS7003 going to sleep.");
   pms.sleep();
+}
+#endif
+
+void read_mh_z19_co2_data()
+{
+  static byte request[9] = {0xFF, 0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79};
+  static unsigned char response[9];
+
+   Serial2.write(request, 9);
+   memset(response, 0, 9);
+   Serial2.readBytes(response, 9);
+   int i;
+   byte crc =0;
+   for (i = 1; i < 8; i++) crc+=response[i];
+   crc = 255 - crc;
+   crc++;
+
+   if (!(response[0] == 0xFF && response[1] == 0x86 && response[8] == crc) ) 
+   { 
+    //Serial.println("CRC error");
+    telemetry.setCarbonDioxide(-300);
+   } else {
+    unsigned int HLconcentration = (unsigned int) response[2];
+    unsigned int LLconcentration = (unsigned int) response[3];
+    unsigned int co2 = (256*HLconcentration) + LLconcentration;
+    telemetry.setCarbonDioxide(co2);
+    
+    #ifdef DISABLE_PMS7003
+    Serial.print("CO2: ");
+    Serial.println(telemetry.getCarbonDioxide());
+    #endif
+   }
 }
 
 void loop() {
+  #ifdef DISABLE_PMS7003
   Serial.println("Begin loop");
+  #endif
 
+  read_mh_z19_co2_data();
+
+  #ifndef DISABLE_PMS7003
   //reads pms7003 data
   read_pms7003_data();
+  #endif
 
   //reads the temperature from the sensor
   read_temperature();
@@ -276,8 +350,15 @@ void loop() {
   telemetry.send_data_to_iot_server();
 
   //wait 60sec to read next sensor data
-  static const unsigned int DEVICE_DELAY_MS = 60000;
+  #ifdef DEBUG_FAST_LOOP
+  static const unsigned int DEVICE_DELAY_MS = 3000; //3 seconds
+  #else
+  static const unsigned int DEVICE_DELAY_MS = 60000; //60 seconds
+  #endif
+
+  #ifdef DISABLE_PMS7003
   Serial.println("Delay for: " + (String)(DEVICE_DELAY_MS / 1000) + " sec");
   Serial.println("\n");
+  #endif
   delay(DEVICE_DELAY_MS);
 }
