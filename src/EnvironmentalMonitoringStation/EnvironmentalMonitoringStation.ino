@@ -22,7 +22,7 @@
  * ***********************************************************************/
 
 //conditional variables for various purposes
-//#define DEBUG_FAST_LOOP
+//#define DEBUG_FAST_LOOP //makes looping faster without big delays
 
 //the board should support an ADC resolution of 12bits
 //TODO: check if there is a constant to get the ADC resolution of the board at compile time
@@ -190,24 +190,6 @@ void read_humidity()
   Serial.println("Humidity is: " + (String)telemetry.getHumidity() + " %");
 }
 
-void connect_to_wifi()
-{
-  if(WiFi.status() != WL_CONNECTED){
-    WiFi.reconnect();
-    
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(1000);
-      Serial.println("Connecting to WiFi..");
-      FailureWatchdog::reportError();
-    }
-  }
-
-  Serial.println("Connected to the WiFi network.");
-  Serial.print("WiFi IP address: ");
-  Serial.println(WiFi.localIP());
-  FailureWatchdog::reportSuccess();
-}
-
 void read_pms7003_data()
 {
   
@@ -258,8 +240,8 @@ void read_mh_z19_co2_data()
    memset(response, 0, 9);
    CO2_serial.readBytes(response, 9);
    int i;
-   byte crc =0;
-   for (i = 1; i < 8; i++) crc+=response[i];
+   byte crc = 0;
+   for (i = 1; i < 8; i++) crc += response[i];
    crc = 255 - crc;
    crc++;
 
@@ -278,9 +260,28 @@ void read_mh_z19_co2_data()
    }
 }
 
+void connect_to_wifi()
+{
+  if(WiFi.status() != WL_CONNECTED){
+    WiFi.reconnect();
+    
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(1000);
+      Serial.println("Connecting to WiFi..");
+      FailureWatchdog::reportError();
+    }
+  }
+
+  Serial.println("Connected to the WiFi network.");
+  Serial.print("WiFi IP address: ");
+  Serial.println(WiFi.localIP());
+  FailureWatchdog::reportSuccess();
+}
+
 void loop() {
   Serial.println("Begin loop");
 
+  //reads co2 data
   read_mh_z19_co2_data();
 
   //reads pms7003 data
