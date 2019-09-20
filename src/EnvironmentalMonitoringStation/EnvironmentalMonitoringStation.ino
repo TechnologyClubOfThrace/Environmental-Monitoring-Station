@@ -32,11 +32,11 @@ static const unsigned int ADC_RESOLUTION = 4096;
 
 #include "WiFi.h"
 #include "failure_watchdog.h"
-#include "MQ7.h"
 
 #include "HardwareSerial.h"
-HardwareSerial CO2_serial(2);
-HardwareSerial PMS7003_serial(1);
+static HardwareSerial console_serial(2); // UART 2 - CONSOLE
+static HardwareSerial PMS7003_serial(1); // UART 1
+static HardwareSerial CO2_serial(0); // UART 0
 
 #include "PMS.h"
 PMS pms(PMS7003_serial);
@@ -48,6 +48,7 @@ PMS::DATA data;
 #include <DallasTemperature.h>
 
 #include <limits.h>
+#include "MQ7.h"
 MQ7 mq7(MQ7_CO_PIN, 5.0);
 
 //BME280 atmospheric pressure and hunidity sensor (temperature sensor not used)
@@ -64,16 +65,18 @@ Telemetry telemetry;
 //setup code runs once at the beginning
 void setup() {
   //console output
-  Serial.begin(115200);
+  //console_serial.begin(115200);
+  console_serial.begin(115200, SERIAL_8N1, 3, 1);
 
   //Serial sensors CO2 and PMS7003
-  CO2_serial.begin(9600, SERIAL_8N1, 5, 18);
-  PMS7003_serial.begin(PMS::BAUD_RATE, SERIAL_8N1, 16, 17);
+  PMS7003_serial.begin(PMS::BAUD_RATE, SERIAL_8N1, 26, 25);
+  CO2_serial.begin(9600, SERIAL_8N1, 33, 32);
+  //CO2_serial.begin(9600, SERIAL_8N1, 16, 17);
 
   // BME280 sensor init
   if (bme280.begin(0x76))
   {
-    Serial.println("BME2800 init success");
+    console_serial.println("BME2800 init success");
 
     bme280.setSampling(Adafruit_BME280::MODE_NORMAL,
     Adafruit_BME280::SAMPLING_NONE, // temperature sensor off
@@ -83,17 +86,17 @@ void setup() {
     Adafruit_BME280::STANDBY_MS_500);
   } else {
     // Oops, something went wrong, this is usually a connection problem,
-    Serial.println("BMP280 init fail\n\n");
-    //Serial.println(std::numeric_limits<unsigned long>::max());
+    console_serial.println("BMP280 init fail\n\n");
+    //console_serial.println(std::numeric_limits<unsigned long>::max());
   }
 
-  //set carbon monixide sensor analog pin for input
+  //set carbon monoxide sensor analog pin for input
   pinMode(MQ7_CO_PIN, INPUT);
 
   // Your WiFi credentials.// Set password to "" for open networks.
   static char * ssid     = "steth";
   static char * password = "ilovecomputers";
-  Serial.println(ssid);
+  console_serial.println(ssid);
  
 
 /*
@@ -108,9 +111,9 @@ void setup() {
   */
 
   //connect to the WiFi
-  Serial.println("WiFi.begin(ssid, password)...");
+  console_serial.println("WiFi.begin(ssid, password)...");
   WiFi.begin(ssid, password);
-  Serial.println("Starting ...");
+  console_serial.println("Starting ...");
 }
 
 long double mypow(float v, float p)
@@ -143,8 +146,8 @@ void read_carbon_monoxide()
     sensor_volt = (float)sensorValue / 4096 * 5.0;
     RS_gas = ((5.0 * R2) / sensor_volt) - R2;
     R0 = RS_gas / 1;
-    Serial.print("R0: ");
-    Serial.println(R0);
+    console_serial.print("R0: ");
+    console_serial.println(R0);
     R0_ok = true;
   }
   */
@@ -155,7 +158,7 @@ void read_carbon_monoxide()
    float x = 1538.46 * ratio;
    float ppm = mypow(x, -1.709);
    telemetry.setCarbonMonoxide(ppm);
-   Serial.println("Carbon Monoxide is: " + (String)telemetry.getCarbonMonoxide() +" ppm"); 
+   console_serial.println("Carbon Monoxide is: " + (String)telemetry.getCarbonMonoxide() +" ppm"); 
 }
 
 void read_temperature()
@@ -171,29 +174,29 @@ void read_temperature()
   // Pass our oneWire reference to Dallas Temperature. 
   static DallasTemperature temperature_sensors(&oneWire);
 
-  Serial.println("Requesting temperatures...");
+  console_serial.println("Requesting temperatures...");
   temperature_sensors.requestTemperatures(); // Send the command to get temperature readings
-  Serial.print("Temperature is: ");
+  console_serial.print("Temperature is: ");
   telemetry.setTemperatureCelcius(temperature_sensors.getTempCByIndex(0));
-  Serial.println(telemetry.getTemperatureCelcius());
+  console_serial.println(telemetry.getTemperatureCelcius());
 }
 
 void read_barometric_pressure()
 {
   telemetry.setBarometricPressure(bme280.readPressure() / 100);
-  Serial.println("Barometric pressure is: " + (String)telemetry.getBarometricPressure() + " hPa");
+  console_serial.println("Barometric pressure is: " + (String)telemetry.getBarometricPressure() + " hPa");
 }
 
 void read_humidity()
 {
   telemetry.setHumidity(bme280.readHumidity());
-  Serial.println("Humidity is: " + (String)telemetry.getHumidity() + " %");
+  console_serial.println("Humidity is: " + (String)telemetry.getHumidity() + " %");
 }
 
 void read_pms7003_data()
 {
   
-  //Serial.println("Waking up PMS7003, wait 30 seconds for stable readings...");
+  //console_serial.println("Waking up PMS7003, wait 30 seconds for stable readings...");
   pms.wakeUp();
   #ifdef DEBUG_FAST_LOOP
   delay(3000);
@@ -201,43 +204,47 @@ void read_pms7003_data()
   delay(30000);
   #endif
 
-  Serial.println("Send PMS7003 read request...");
+  console_serial.println("Send PMS7003 read request...");
   pms.requestRead();
 
-  //Serial.println("Wait max. 1 second for read...");
+  //console_serial.println("Wait max. 1 second for read...");
   if (pms.readUntil(data))
   {
     telemetry.setPMS7003_MP_1(data.PM_AE_UG_1_0);
-    Serial.print("PM 1.0 (ug/m3): ");
-    Serial.println(telemetry.getPMS7003_MP_1());
+    console_serial.print("PM 1.0 (ug/m3): ");
+    console_serial.println(telemetry.getPMS7003_MP_1());
     
     telemetry.setPMS7003_MP_2_5(data.PM_AE_UG_2_5);
-    Serial.print("PM 2.5 (ug/m3): ");
-    Serial.println(telemetry.getPMS7003_MP_2_5());
+    console_serial.print("PM 2.5 (ug/m3): ");
+    console_serial.println(telemetry.getPMS7003_MP_2_5());
     
     telemetry.setPMS7003_MP_10(data.PM_AE_UG_10_0);
-    Serial.print("PM 10.0 (ug/m3): ");
-    Serial.println(telemetry.getPMS7003_MP_10());
+    console_serial.print("PM 10.0 (ug/m3): ");
+    console_serial.println(telemetry.getPMS7003_MP_10());
   }
   else
   {
-    Serial.println("No PMS7003 data.");
+    console_serial.println("No PMS7003 data.");
     telemetry.setPMS7003_MP_1(-300);
     telemetry.setPMS7003_MP_2_5(-300);
     telemetry.setPMS7003_MP_10(-300);
   }
 
-  Serial.println("PMS7003 going to sleep.");
+  console_serial.println("PMS7003 going to sleep.");
   pms.sleep();
 }
 
 void read_mh_z19_co2_data()
 {
   static byte request[9] = {0xFF, 0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79};
+  //static byte request[9] = {0xFF, 0x02,0x86,0x00,0x00,0x00,0x00,0x00,0x78};
   static unsigned char response[9];
 
    CO2_serial.write(request, 9);
+   CO2_serial.flush();
+   delay(50);
    memset(response, 0, 9);
+   //while(!CO2_serial.available() ){};
    CO2_serial.readBytes(response, 9);
    int i;
    byte crc = 0;
@@ -247,7 +254,7 @@ void read_mh_z19_co2_data()
 
    if (!(response[0] == 0xFF && response[1] == 0x86 && response[8] == crc) ) 
    { 
-    Serial.println("CO2 Sensor CRC error");
+    console_serial.println("CO2 Sensor CRC error");
     telemetry.setCarbonDioxide(-300);
    } else {
     unsigned int HLconcentration = (unsigned int) response[2];
@@ -255,8 +262,8 @@ void read_mh_z19_co2_data()
     unsigned int co2 = (256*HLconcentration) + LLconcentration;
     telemetry.setCarbonDioxide(co2);
 
-    Serial.print("CO2: ");
-    Serial.println(telemetry.getCarbonDioxide());
+    console_serial.print("CO2: ");
+    console_serial.println(telemetry.getCarbonDioxide());
    }
 }
 
@@ -267,23 +274,23 @@ void connect_to_wifi()
     
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
-      Serial.println("Connecting to WiFi..");
+      console_serial.println("Connecting to WiFi..");
       FailureWatchdog::reportError();
     }
   }
 
-  Serial.println("Connected to the WiFi network.");
-  Serial.print("WiFi IP address: ");
-  Serial.println(WiFi.localIP());
+  console_serial.println("Connected to the WiFi network.");
+  console_serial.print("WiFi IP address: ");
+  console_serial.println(WiFi.localIP());
   FailureWatchdog::reportSuccess();
 }
 
 void loop() {
-  Serial.println("Begin loop");
+  console_serial.println("Begin loop");
 
   //reads co2 data
   read_mh_z19_co2_data();
-
+  
   //reads pms7003 data
   read_pms7003_data();
 
@@ -313,7 +320,7 @@ void loop() {
   static const unsigned int DEVICE_DELAY_MS = 60000; //60 seconds
   #endif
 
-  Serial.println("Delay for: " + (String)(DEVICE_DELAY_MS / 1000) + " sec");
-  Serial.println("\n");
+  console_serial.println("Delay for: " + (String)(DEVICE_DELAY_MS / 1000) + " sec");
+  console_serial.println("\n");
   delay(DEVICE_DELAY_MS);
 }
