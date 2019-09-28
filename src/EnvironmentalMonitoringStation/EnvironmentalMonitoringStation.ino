@@ -80,67 +80,12 @@ Adafruit_BME280 bme280;
 #include "telemetry.h"
 Telemetry telemetry;
 
-/*
-void setup_co2()
-{
-  const uart_port_t uart_num = UART_NUM_1;
-  uart_config_t uart_config = {
-    .baud_rate = 9600,
-    .data_bits = UART_DATA_8_BITS,
-    .parity = UART_PARITY_DISABLE,
-    .stop_bits = UART_STOP_BITS_1,
-    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-    .rx_flow_ctrl_thresh = 0
-    //.rx_flow_ctrl_thresh = 122
-};
-// Configure UART parameters
-  ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
-
-  ESP_ERROR_CHECK(uart_set_pin(UART_NUM_1, 12, 13, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
-
-  // Setup UART buffered IO with event queue
-  const int uart_buffer_size = (1024 * 2);
-  QueueHandle_t uart_queue;
-  // Install UART driver using an event queue here
-  ESP_ERROR_CHECK(uart_driver_install(UART_NUM_1, uart_buffer_size, \
-                                        uart_buffer_size, 10, &uart_queue, 0)); 
-}
-*/
-
-/*
-void setup_pms7003()
-{
-  const uart_port_t uart_num = UART_NUM_1;
-  uart_config_t uart_config = {
-    .baud_rate = PMS::BAUD_RATE,
-    .data_bits = UART_DATA_8_BITS,
-    .parity = UART_PARITY_DISABLE,
-    .stop_bits = UART_STOP_BITS_1,
-    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-    .rx_flow_ctrl_thresh = 122,
-};
-// Configure UART parameters
-  ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
-
-  ESP_ERROR_CHECK(uart_set_pin(UART_NUM_1, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
-
-  // Setup UART buffered IO with event queue
-  const int uart_buffer_size = (1024 * 2);
-  QueueHandle_t uart_queue;
-  // Install UART driver using an event queue here
-  ESP_ERROR_CHECK(uart_driver_install(UART_NUM_1, uart_buffer_size, \
-                                        uart_buffer_size, 10, &uart_queue, 0)); 
-}
-*/
-
 //setup code runs once at the beginning
 void setup() {
-    //console output
-  //console_serial.begin(115200);
+  //console output
   console_serial.begin(9600, SERIAL_8N1, 3, 1);
 
   //setup_pms7003();
-    //Serial sensors CO2 and PMS7003
   PMS7003_serial.begin(PMS::BAUD_RATE, SERIAL_8N1, 16, 17);
   
   //setup_co2();
@@ -148,56 +93,30 @@ void setup() {
   MHZ19_serial.begin(9600, SERIAL_8N1, MHZ19_RX_PIN, MHZ19_TX_PIN); // ESP32 Example
   CO2_MHZ19.begin(MHZ19_serial);                                // *Important, Pass your Stream reference 
   CO2_MHZ19.autoCalibration();                              // Turn auto calibration ON (disable with autoCalibration(false))
-    
-  //CO2_serial.begin(9600, SERIAL_8N1, 33, 32);
-  //pinMode(33, INPUT);
-  //pinMode(32, OUTPUT);
-  //CO2_serial.begin(9600, SERIAL_8N1, 16, 17);
 
   // BME280 sensor init
-    unsigned status;
-    // default settings
-    // (you can also pass in a Wire library object like &Wire2)
-    status = bme280.begin();  
-    if (!status) {
-        console_serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
-        console_serial.print("SensorID was: 0x"); 
-        console_serial.println(bme280.sensorID(),16);
-        console_serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
-        console_serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
-        console_serial.print("        ID of 0x60 represents a BME 280.\n");
-        console_serial.print("        ID of 0x61 represents a BME 680.\n");
-    } else {
-        console_serial.println("BME2800 init success");
-
-        bme280.setSampling(Adafruit_BME280::MODE_FORCED,
-        Adafruit_BME280::SAMPLING_X1, // temperature sensor off
-        Adafruit_BME280::SAMPLING_X1, // pressure
-        Adafruit_BME280::SAMPLING_X1, // humidity
-        Adafruit_BME280::FILTER_OFF);
-    }
-    
-  /*
-  if (bme280.begin(0x76))
-  {
-    console_serial.println("BME2800 init success");
-
-
-    bme280.setSampling(Adafruit_BME280::MODE_NORMAL,
-    Adafruit_BME280::SAMPLING_NONE, // temperature sensor off
-    Adafruit_BME280::SAMPLING_X16, // pressure
-    Adafruit_BME280::SAMPLING_X16, // humidity
-    Adafruit_BME280::FILTER_X2,
-    Adafruit_BME280::STANDBY_MS_500);
-   
-    
+  unsigned bme280_status;
+  // default settings
+  // (you can also pass in a Wire library object like &Wire2)
+  bme280_status = bme280.begin();  
+  if (!bme280_status) {
+      console_serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
+      console_serial.print("SensorID was: 0x"); 
+      console_serial.println(bme280.sensorID(),16);
+      console_serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+      console_serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
+      console_serial.print("        ID of 0x60 represents a BME 280.\n");
+      console_serial.print("        ID of 0x61 represents a BME 680.\n");
   } else {
-    // Oops, something went wrong, this is usually a connection problem,
-    console_serial.println("BMP280 init fail\n\n");
-    //console_serial.println(std::numeric_limits<unsigned long>::max());
-  }
-  */
+      console_serial.println("BME2800 init success");
 
+      bme280.setSampling(Adafruit_BME280::MODE_FORCED,
+      Adafruit_BME280::SAMPLING_X1, // temperature sensor off
+      Adafruit_BME280::SAMPLING_X1, // pressure
+      Adafruit_BME280::SAMPLING_X1, // humidity
+      Adafruit_BME280::FILTER_OFF);
+  }
+    
   //set carbon monoxide sensor analog pin for input
   pinMode(MQ7_CO_PIN, INPUT);
 
@@ -206,7 +125,6 @@ void setup() {
   static char * password = "ilovecomputers";
   console_serial.println(ssid);
  
-
 /*
  * CONFIGURATION FOR STATIC IP -
   IPAddress ip (192,168,1,25);
@@ -222,7 +140,6 @@ void setup() {
   console_serial.println("WiFi.begin(ssid, password)...");
   WiFi.begin(ssid, password);
   console_serial.println("Starting ...");
-  delay(5000);
 }
 
 long double mypow(float v, float p)
@@ -343,98 +260,6 @@ void read_pms7003_data()
   pms.sleep();
 }
 
-/*
-void read_mh_z19_co2_data()
-{
-   byte request[9] = {0xFF, 0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79};
-   //static byte request[9] = {0xFF, 0x02,0x86,0x00,0x00,0x00,0x00,0x00,0x78};
-   unsigned char response[9];
-
-   CO2_serial.write(request, 9);
-   CO2_serial.flush();
-   delay(500);
-   memset(response, 0, 9);
-   //while(!CO2_serial.available() ){};
-   CO2_serial.readBytes(response, 9);
-   int i;
-   byte crc = 0;
-   for (i = 1; i < 8; i++) crc += response[i];
-   crc = 255 - crc;
-   crc++;
-
-   if (!(response[0] == 0xFF && response[1] == 0x86 && response[8] == crc) ) 
-   { 
-    console_serial.println("CO2 Sensor CRC error");
-    telemetry.setCarbonDioxide(-300);
-    ESP.restart();
-   } else {
-    unsigned int HLconcentration = (unsigned int) response[2];
-    unsigned int LLconcentration = (unsigned int) response[3];
-    unsigned int co2 = (256*HLconcentration) + LLconcentration;
-    telemetry.setCarbonDioxide(co2);
-
-    console_serial.print("CO2: ");
-    console_serial.println(telemetry.getCarbonDioxide());
-   }
-}
-*/
-
-/*
-void read_mh_z19_co2_data()
-{
-  const char request[] = {0xFF, 0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79}; 
-   //char* request[] = {0xFF, 0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79,0};
-   //static byte request[9] = {0xFF, 0x02,0x86,0x00,0x00,0x00,0x00,0x00,0x78};
-   unsigned char response[9];
-
-
-console_serial.println((unsigned int)request[0]);
-console_serial.println((unsigned int)request[1]);
-
-   //char* test_str = "This is a test string.\n";
-   int write_ret = uart_write_bytes(UART_NUM_1, (const char*)request, 9);
-   console_serial.print("write_ret:");
-   console_serial.println(write_ret);
-   
-   //CO2_serial.write(request, 9);
-   //CO2_serial.flush();
-   delay(500);
-   memset(response, 0, 9);
-   //while(!CO2_serial.available() ){};
-   //CO2_serial.readBytes(response, 9);
-
-   // Read data from UART.
-   int length = 0;
-   ESP_ERROR_CHECK(uart_get_buffered_data_len(UART_NUM_1, (size_t*)&length));
-   length = uart_read_bytes(UART_NUM_1, response, 9, 100);
-   console_serial.println("length:");
-   console_serial.println(length);
-   
-   int i;
-   byte crc = 0;
-   for (i = 1; i < 8; i++) crc += response[i];
-   crc = 255 - crc;
-   crc++;
-
-    console_serial.println((unsigned int)response[2]);
-    console_serial.println((unsigned int)response[3]);
-    
-   if (!(response[0] == 0xFF && response[1] == 0x86 && response[8] == crc) ) 
-   { 
-    console_serial.println("CO2 Sensor CRC error");
-    telemetry.setCarbonDioxide(-300);
-    //ESP.restart();
-   } else {
-    unsigned int HLconcentration = (unsigned int) response[2];
-    unsigned int LLconcentration = (unsigned int) response[3];
-    unsigned int co2 = (256*HLconcentration) + LLconcentration;
-    telemetry.setCarbonDioxide(co2);
-
-    console_serial.print("CO2: ");
-    console_serial.println(co2);
-   }
-}
-*/
 
 void read_mh_z19_co2_data()
 {
