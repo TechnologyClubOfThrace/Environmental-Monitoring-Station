@@ -21,9 +21,6 @@
  * along with Environmental Monitoring Station.  If not, see <http://www.gnu.org/licenses/>.
  * ***********************************************************************/
 
-#include "esp_err.h"
-#include "esp_system.h"
-#include "driver/uart.h"
 
 //conditional variables for various purposes
 //#define DEBUG_FAST_LOOP //makes looping faster without big delays
@@ -36,6 +33,7 @@ static const unsigned int ADC_RESOLUTION = 4096;
 
 #include "WiFi.h"
 #include "failure_watchdog.h"
+#include "EEPROM.h" //????
 
 #include "HardwareSerial.h"
 static HardwareSerial console_serial(0); // UART 0 - CONSOLE
@@ -47,12 +45,9 @@ static HardwareSerial PMS7003_serial(2); // UART 2
 #define MHZ19_TX_PIN 32                                          // Tx pin which the MHZ19 Rx pin is attached to
 MHZ19 CO2_MHZ19;                                             // Constructor for MH-Z19 class
 
-unsigned long getDataTimer = 0;                             // Variable to store timer interval
-
 #include "PMS.h"
 PMS pms(PMS7003_serial);
 PMS::DATA data;
-
 
 //headers for reading temperature 
 #include <OneWire.h> 
@@ -62,19 +57,15 @@ PMS::DATA data;
 #include "MQ7.h"
 MQ7 mq7(MQ7_CO_PIN, 5.0);
 
-
-//BME280 atmospheric pressure and hunidity sensor (temperature sensor not used)
+//BME280 atmospheric pressure and hunidity sensor (temperature sensor is not used)
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
-//#include <Adafruit_BMP085.h>
 #define BME_SCK 13
 #define BME_MISO 12
 #define BME_MOSI 11
 #define BME_CS 10
 #define SEALEVELPRESSURE_HPA (1019.50)
 Adafruit_BME280 bme280;
-//Adafruit_BMP085 bme280;
-
 
 //library that collects and sends data to the IoT server
 #include "telemetry.h"
@@ -108,13 +99,15 @@ void setup() {
       console_serial.print("        ID of 0x60 represents a BME 280.\n");
       console_serial.print("        ID of 0x61 represents a BME 680.\n");
   } else {
-      console_serial.println("BME2800 init success");
+      console_serial.println("BME280 init success");
 
+      /*
       bme280.setSampling(Adafruit_BME280::MODE_FORCED,
       Adafruit_BME280::SAMPLING_X1, // temperature sensor off
       Adafruit_BME280::SAMPLING_X1, // pressure
       Adafruit_BME280::SAMPLING_X1, // humidity
       Adafruit_BME280::FILTER_OFF);
+      */
   }
     
   //set carbon monoxide sensor analog pin for input
@@ -139,7 +132,8 @@ void setup() {
   //connect to the WiFi
   console_serial.println("WiFi.begin(ssid, password)...");
   WiFi.begin(ssid, password);
-  console_serial.println("Starting ...");
+  
+  console_serial.println("Setup done! Entering environmental monitoring station main loop");
 }
 
 long double mypow(float v, float p)
@@ -154,6 +148,21 @@ long double mypow(float v, float p)
     r = pow(v, p);
     return (r*sign);
 }
+
+void clean_eeprom()
+{
+  Serial.print("cleanning eeprom...\n");
+  
+  EEPROM.begin(4096); //EEPROM Emulation of ESP32 flash
+  
+  for (int i = 0; i < 4096; i++)
+  {
+    EEPROM.write(i, 255);
+    EEPROM.commit();
+  }
+  EEPROM.commit();
+}
+
 
 void read_carbon_monoxide()
 {
@@ -221,19 +230,18 @@ void read_humidity()
 
 void read_pms7003_data()
 {
-  
-  //console_serial.println("Waking up PMS7003, wait 30 seconds for stable readings...");
   pms.wakeUp();
   #ifdef DEBUG_FAST_LOOP
+  console_serial.println("Waking up PMS7003, wait 3 seconds for stable readings...");
   delay(3000);
   #else
+  console_serial.println("Waking up PMS7003, wait 30 seconds for stable readings...");
   delay(30000);
   #endif
 
   console_serial.println("Send PMS7003 read request...");
   pms.requestRead();
 
-  //console_serial.println("Wait max. 1 second for read...");
   if (pms.readUntil(data))
   {
     telemetry.setPMS7003_MP_1(data.PM_AE_UG_1_0);
