@@ -160,7 +160,7 @@ String Telemetry::getTelemetryJson()
   String pressure       =  (String)getBarometricPressure();
   String humidity       =  (String)getHumidity();
   String carbonMonoxide =  (String)getCarbonMonoxide();
-  String carbonDioxide =  (String)getCarbonDioxide();
+  String carbonDioxide  =  (String)getCarbonDioxide();
   String photoresistor  =  (String)getPhotoresistor();
   String PMS7003_MP_1   =  (String)getPMS7003_MP_1();
   String PMS7003_MP_2_5 =  (String)getPMS7003_MP_2_5();

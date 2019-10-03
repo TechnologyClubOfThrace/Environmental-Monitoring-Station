@@ -21,7 +21,6 @@
  * along with Environmental Monitoring Station.  If not, see <http://www.gnu.org/licenses/>.
  * ***********************************************************************/
 
-
 //conditional variables for various purposes
 //#define DEBUG_FAST_LOOP //makes looping faster without big delays
 
@@ -33,7 +32,7 @@ static const unsigned int ADC_RESOLUTION = 4096;
 
 #include "WiFi.h"
 #include "failure_watchdog.h"
-#include "EEPROM.h" //????
+//#include "EEPROM.h" //????
 
 #include "HardwareSerial.h"
 static HardwareSerial console_serial(0); // UART 0 - CONSOLE
@@ -149,6 +148,7 @@ long double mypow(float v, float p)
     return (r*sign);
 }
 
+/*
 void clean_eeprom()
 {
   Serial.print("cleanning eeprom...\n");
@@ -162,6 +162,7 @@ void clean_eeprom()
   }
   EEPROM.commit();
 }
+*/
 
 
 void read_carbon_monoxide()
@@ -242,7 +243,7 @@ void read_pms7003_data()
   console_serial.println("Send PMS7003 read request...");
   pms.requestRead();
 
-  if (pms.readUntil(data))
+  if (pms.readUntil(data, 2000))
   {
     telemetry.setPMS7003_MP_1(data.PM_AE_UG_1_0);
     console_serial.print("PM 1.0 (ug/m3): ");
