@@ -127,7 +127,7 @@ float Telemetry::getPMS7003_MP_10()
 void Telemetry::send_data_to_iot_server()
 {
   HTTPClient http;
-  http.begin("http://chat.steth.gr:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
+  http.begin("http://iot.techthrace.com:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
   http.addHeader("Content-Type", "application/json"); //Specify content-type header
 
   int httpResponseCode = http.POST(getTelemetryJson()); //Send the actual POST request
@@ -167,16 +167,16 @@ String Telemetry::getTelemetryJson()
   String PMS7003_MP_10  =  (String)getPMS7003_MP_10();
 
   json += "{";
-  json += "\"temperature\":\""+ temperature +"\"";
-  json += ",\"pressure\":\""+ pressure + "\"";
-  json += ",\"humidity\":\""+ humidity + "\"";
-  json += ",\"carbonMonoxide\":\""+ carbonMonoxide + "\"";
-  json += ",\"carbonDioxide\":\""+ carbonDioxide + "\"";
-  json += ",\"PMS7003_MP_1\":\""+ PMS7003_MP_1 + "\"";
-  json += ",\"PMS7003_MP_2_5\":\""+ PMS7003_MP_2_5 + "\"";
-  json += ",\"PMS7003_MP_10\":\""+ PMS7003_MP_10 + "\"";
-  json += ",\"photoresistor\":\""+ photoresistor + "\"";
-  json += ",\"uptime\":\"" + uptime_formatter::getUptime() + "\"";
+  json += "\"temperature\":\""     + temperature                   + "\"";
+  json += ",\"pressure\":\""       + pressure                      + "\"";
+  json += ",\"humidity\":\""       + humidity                      + "\"";
+  json += ",\"carbonMonoxide\":\"" + carbonMonoxide                + "\"";
+  json += ",\"carbonDioxide\":\""  + carbonDioxide                 + "\"";
+  json += ",\"PMS7003_MP_1\":\""   + PMS7003_MP_1                  + "\"";
+  json += ",\"PMS7003_MP_2_5\":\"" + PMS7003_MP_2_5                + "\"";
+  json += ",\"PMS7003_MP_10\":\""  + PMS7003_MP_10                 + "\"";
+  json += ",\"photoresistor\":\""  + photoresistor                 + "\"";
+  json += ",\"uptime\":\""         + uptime_formatter::getUptime() + "\"";
   json += "}";
 
   Serial.println("Uptime: " + uptime_formatter::getUptime());

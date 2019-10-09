@@ -242,6 +242,7 @@ void read_pms7003_data()
 
   console_serial.println("Send PMS7003 read request...");
   pms.requestRead();
+  PMS7003_serial.flush(); //requestRead writes to the serial without calling flush. This causes the library to timeout waiting for data. That's why we call flush() here.
 
   if (pms.readUntil(data, 2000))
   {
