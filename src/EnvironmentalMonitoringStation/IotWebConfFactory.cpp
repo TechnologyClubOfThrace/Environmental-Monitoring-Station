@@ -51,7 +51,7 @@ void IotWebConfFactory::setup()
   pinMode(23, INPUT);
   if(digitalRead(23) == HIGH){
     Serial.println("Pin is HIGH!!!");
-    IotWebConfFactory::clean_eeprom();
+    //IotWebConfFactory::clean_eeprom();
   }
 
   //Serial.println(IotWebConfFactory::wifiInitialApPassword);
