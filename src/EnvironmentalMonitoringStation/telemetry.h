@@ -36,6 +36,12 @@ class Telemetry
     void setHumidity(float humidity);
     void setCarbonMonoxide(float carbonMonoxide);
     void setCarbonDioxide(float carbonDioxide);
+    void setTelemetryUrl(String url);
+    void setTelemetryPort(String port);
+    void setTelemetryToken(String token);
+    String getTelemetryUrl();
+    String getTelemetryPort();
+    String getTelemetryToken();
     
     float getTemperatureCelcius();
     float getPhotoresistor();
@@ -60,4 +66,7 @@ class Telemetry
     float m_PMS7003_MP_1 = -300;
     float m_PMS7003_MP_2_5 = -300;
     float m_PMS7003_MP_10 = -300;
+    String m_telemetry_url;
+    String m_telemetry_port;
+    String m_telemetry_token;
 };

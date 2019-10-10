@@ -30,9 +30,7 @@ static const unsigned int ADC_RESOLUTION = 4096;
 
 #define MQ7_CO_PIN   39 //ADC GPIO34 - Carbon Monoxide Sensor
 
-#include "WiFi.h"
-#include "failure_watchdog.h"
-//#include "EEPROM.h" //????
+#include "IotWebConfFactory.h"
 
 #include "HardwareSerial.h"
 static HardwareSerial console_serial(0); // UART 0 - CONSOLE
@@ -73,7 +71,8 @@ Telemetry telemetry;
 //setup code runs once at the beginning
 void setup() {
   //console output
-  console_serial.begin(9600, SERIAL_8N1, 3, 1);
+  Serial.begin(115200, SERIAL_8N1, 3, 1);//required for IotWebConfFactory serial monitoring in debug mode
+  console_serial.begin(115200, SERIAL_8N1, 3, 1);
 
   //setup_pms7003();
   PMS7003_serial.begin(PMS::BAUD_RATE, SERIAL_8N1, 16, 17);
@@ -112,26 +111,8 @@ void setup() {
   //set carbon monoxide sensor analog pin for input
   pinMode(MQ7_CO_PIN, INPUT);
 
-  // Your WiFi credentials.// Set password to "" for open networks.
-  static char * ssid     = "steth";
-  static char * password = "ilovecomputers";
-  console_serial.println(ssid);
- 
-/*
- * CONFIGURATION FOR STATIC IP -
-  IPAddress ip (192,168,1,25);
-  IPAddress dns (1,1,1,1);
-  IPAddress gateway (192,168,1,20);
-  IPAddress netmask (255,255,255,0);
-  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000);
-  WiFi.config(ip, gateway, netmask, dns); 
-  //WiFi.config(ip); 
-  */
+  IotWebConfFactory::setup();
 
-  //connect to the WiFi
-  console_serial.println("WiFi.begin(ssid, password)...");
-  WiFi.begin(ssid, password);
-  
   console_serial.println("Setup done! Entering environmental monitoring station main loop");
 }
 
@@ -147,23 +128,6 @@ long double mypow(float v, float p)
     r = pow(v, p);
     return (r*sign);
 }
-
-/*
-void clean_eeprom()
-{
-  Serial.print("cleanning eeprom...\n");
-  
-  EEPROM.begin(4096); //EEPROM Emulation of ESP32 flash
-  
-  for (int i = 0; i < 4096; i++)
-  {
-    EEPROM.write(i, 255);
-    EEPROM.commit();
-  }
-  EEPROM.commit();
-}
-*/
-
 
 void read_carbon_monoxide()
 {
@@ -234,17 +198,17 @@ void read_pms7003_data()
   pms.wakeUp();
   #ifdef DEBUG_FAST_LOOP
   console_serial.println("Waking up PMS7003, wait 3 seconds for stable readings...");
-  delay(3000);
+  IotWebConfFactory::mydelay(3000);
   #else
   console_serial.println("Waking up PMS7003, wait 30 seconds for stable readings...");
-  delay(30000);
+  IotWebConfFactory::mydelay(30000);
   #endif
 
   console_serial.println("Send PMS7003 read request...");
   pms.requestRead();
   PMS7003_serial.flush(); //requestRead writes to the serial without calling flush. This causes the library to timeout waiting for data. That's why we call flush() here.
 
-  if (pms.readUntil(data, 2000))
+  if (pms.readUntil(data, 1000))
   {
     telemetry.setPMS7003_MP_1(data.PM_AE_UG_1_0);
     console_serial.print("PM 1.0 (ug/m3): ");
@@ -279,27 +243,20 @@ void read_mh_z19_co2_data()
   console_serial.println(telemetry.getCarbonDioxide());
 }
 
-
-void connect_to_wifi()
-{
-  if(WiFi.status() != WL_CONNECTED){
-    WiFi.reconnect();
-    
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(1000);
-      console_serial.println("Connecting to WiFi..");
-      FailureWatchdog::reportError();
-    }
-  }
-
-  console_serial.println("Connected to the WiFi network.");
-  console_serial.print("WiFi IP address: ");
-  console_serial.println(WiFi.localIP());
-  FailureWatchdog::reportSuccess();
-}
-
 void loop() {
   console_serial.println("Begin loop");
+
+  //wait 60sec to read next sensor data
+  #ifdef DEBUG_FAST_LOOP
+  static unsigned long DEVICE_DELAY_MS = 3000; //3 seconds
+  #else
+  static unsigned long DEVICE_DELAY_MS = 60000; //60 seconds
+  #endif
+  
+  IotWebConfFactory::loop();
+  telemetry.setTelemetryUrl(IotWebConfFactory::getConfigUrl());
+  telemetry.setTelemetryToken(IotWebConfFactory::getConfigToken());
+  telemetry.setTelemetryPort(IotWebConfFactory::getConfigPort());
 
   //reads pms7003 data
   read_pms7003_data();
@@ -318,22 +275,11 @@ void loop() {
   
   //reads the carbon monoxide value from the MQ-7 sensor
   read_carbon_monoxide();
-
-  //connects to the wifi if not connected.
-  //Returns only when a wifi connection is established.
-  connect_to_wifi();
   
   //sends all sensor data to the IoT server
   telemetry.send_data_to_iot_server();
 
-  //wait 60sec to read next sensor data
-  #ifdef DEBUG_FAST_LOOP
-  static const unsigned int DEVICE_DELAY_MS = 3000; //3 seconds
-  #else
-  static const unsigned int DEVICE_DELAY_MS = 60000; //60 seconds
-  #endif
-
   console_serial.println("Delay for: " + (String)(DEVICE_DELAY_MS / 1000) + " sec");
   console_serial.println("\n");
-  delay(DEVICE_DELAY_MS);
+  IotWebConfFactory::mydelay(DEVICE_DELAY_MS);
 }

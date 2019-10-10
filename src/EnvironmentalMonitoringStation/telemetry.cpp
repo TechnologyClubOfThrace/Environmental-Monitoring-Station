@@ -22,7 +22,6 @@
  * ***********************************************************************/
 
 #include "telemetry.h"
-#include "failure_watchdog.h"
 
 //for http post request to IoT server
 #include "HTTPClient.h"
@@ -127,7 +126,8 @@ float Telemetry::getPMS7003_MP_10()
 void Telemetry::send_data_to_iot_server()
 {
   HTTPClient http;
-  http.begin("http://iot.techthrace.com:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
+  //http.begin("http://iot.techthrace.com:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
+  http.begin("http://" + getTelemetryUrl() + ":" + getTelemetryPort() + "/api/v1/" + getTelemetryToken() + "/telemetry");
   http.addHeader("Content-Type", "application/json"); //Specify content-type header
 
   int httpResponseCode = http.POST(getTelemetryJson()); //Send the actual POST request
@@ -140,15 +140,7 @@ void Telemetry::send_data_to_iot_server()
     Serial.print("Error on sending POST: ");
     Serial.println(httpResponseCode);
   }
-
-  //If the http post response is not 200
-  //then report the error to the watchdog
-  if(httpResponseCode == 200){
-    FailureWatchdog::reportSuccess();
-  } else {
-    FailureWatchdog::reportError();
-  }
-
+  
   http.end();  //Free resources
 }
 
@@ -182,4 +174,34 @@ String Telemetry::getTelemetryJson()
   Serial.println("Uptime: " + uptime_formatter::getUptime());
 
   return json;
+}
+
+void Telemetry::setTelemetryUrl(String url)
+{
+  m_telemetry_url = url;
+}
+
+void Telemetry::setTelemetryPort(String port)
+{
+  m_telemetry_port = port;
+}
+
+void Telemetry::setTelemetryToken(String token)
+{
+  m_telemetry_token = token;
+}
+
+String Telemetry::getTelemetryUrl()
+{
+  return m_telemetry_url;
+}
+
+String Telemetry::getTelemetryPort()
+{
+  return m_telemetry_port;
+}
+
+String Telemetry::getTelemetryToken()
+{
+  return m_telemetry_token;
 }
