@@ -58,7 +58,6 @@ class Telemetry
 
   private:
     float m_temperature_celcius = -300;
-    float m_photoresistor = -300;
     float m_barometricPressure = -300;
     float m_humidity = -300;
     float m_carbonMonoxide = -300;

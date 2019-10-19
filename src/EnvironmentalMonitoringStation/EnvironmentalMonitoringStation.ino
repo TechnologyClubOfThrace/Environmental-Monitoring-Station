@@ -135,25 +135,25 @@ void read_carbon_monoxide()
   int sensorValue = analogRead(MQ7_CO_PIN);
  
   //read R0 resistanse
-  static float R0_ok = false;
-  static const float R0 = 7000; //used for sensor calibration
+  static const float R0 = 4400; //used for sensor calibration
   static float sensor_volt = 0;
   static float RS_gas = 0;
+
 
   /*
   if (true){
     int R2 = 2000;
-    sensor_volt = (float)sensorValue / 4096 * 5.0;
-    RS_gas = ((5.0 * R2) / sensor_volt) - R2;
-    R0 = RS_gas / 1;
+    sensor_volt = (float)sensorValue / 4096 * 3.3;
+    RS_gas = ((3.3 * R2) / sensor_volt) - R2;
+    static float R0_computed = RS_gas / 1;
     console_serial.print("R0: ");
-    console_serial.println(R0);
-    R0_ok = true;
+    console_serial.println(R0_computed);
   }
   */
+  
 
-   sensor_volt = ((float)sensorValue / 4) / ADC_RESOLUTION * 5.0;
-   RS_gas = (5.0 - sensor_volt) / sensor_volt;
+   sensor_volt = ((float)sensorValue / 4) / ADC_RESOLUTION * 3.3;
+   RS_gas = (3.3 - sensor_volt) / sensor_volt;
    float ratio = RS_gas / R0; //Replace R0 with the value found using the sketch above
    float x = 1538.46 * ratio;
    float ppm = mypow(x, -1.709);
@@ -206,9 +206,8 @@ void read_pms7003_data()
 
   console_serial.println("Send PMS7003 read request...");
   pms.requestRead();
-  PMS7003_serial.flush(); //requestRead writes to the serial without calling flush. This causes the library to timeout waiting for data. That's why we call flush() here.
 
-  if (pms.readUntil(data, 1000))
+  if (pms.readUntil(data, 2000))
   {
     telemetry.setPMS7003_MP_1(data.PM_AE_UG_1_0);
     console_serial.print("PM 1.0 (ug/m3): ");

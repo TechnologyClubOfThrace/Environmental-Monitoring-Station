@@ -29,11 +29,12 @@ class IotWebConfFactory
     IotWebConfFactory();
     static void setup();
     static void loop();
-    static void mydelay(unsigned long mmillis);
+    static void mydelay(unsigned long milliseconds);
 
     static String getConfigUrl();
     static String getConfigToken();
     static String getConfigPort();
+    static void read_factory_reset_button();
 
   private:
     // -- Initial name of the Thing. Used e.g. as SSID of the own Access Point.

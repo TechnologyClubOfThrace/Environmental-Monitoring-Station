@@ -1,3 +1,26 @@
+/* ************************************************************************
+ * Environmental Monitoring Station
+ * (C) 2019 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
+ * (C) 2019 by Yiannis Grigoriadis
+ * (C) 2019 by Kostas Laftsis
+ * (C) 2019 by Marios Zikos
+ *
+ * This file is part of Environmental Monitoring Station.
+ *
+ * Environmental Monitoring Station is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Environmental Monitoring Station is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Environmental Monitoring Station.  If not, see <http://www.gnu.org/licenses/>.
+ * ***********************************************************************/
+
 #include "IotWebConfFactory.h"
 #include "EEPROM.h"
 
@@ -49,13 +72,7 @@ void IotWebConfFactory::setup()
   Serial.println("IotWebConfFactory Setup start");
 
   pinMode(23, INPUT);
-  if(digitalRead(23) == HIGH){
-    Serial.println("Pin is HIGH!!!");
-    //IotWebConfFactory::clean_eeprom();
-  }
-
-  //Serial.println(IotWebConfFactory::wifiInitialApPassword);
-
+  IotWebConfFactory::read_factory_reset_button();
 
   IotWebConfFactory::iotWebConf.setStatusPin(IotWebConfFactory::STATUS_PIN);
   //iotWebConf.setConfigPin(CONFIG_PIN);
@@ -75,6 +92,26 @@ void IotWebConfFactory::setup()
   IotWebConfFactory::server.onNotFound([](){ IotWebConfFactory::iotWebConf.handleNotFound(); });
 
   Serial.println("IotWebConfFactory Setup Done!");
+}
+
+
+void IotWebConfFactory::read_factory_reset_button()
+{
+  static int read_counter = 0;
+  static String read_result = "";
+  read_result += "read counter: ";
+  read_result += (String)read_counter;
+  read_result += " Pin is: ";
+  if(digitalRead(23) == HIGH){
+    Serial.println("Pin is HIGH!!!");
+    read_result += "HIGH , ";
+    IotWebConfFactory::clean_eeprom();
+  } else {
+    Serial.println("Pin is LOW!!!");
+    read_result += "LOW , ";
+  }
+  Serial.println(read_result);
+  read_counter++;
 }
 
 void IotWebConfFactory::clean_eeprom()
@@ -168,13 +205,13 @@ String IotWebConfFactory::getConfigPort()
   return (String)port_int_param_value;
 }
 
-void IotWebConfFactory::mydelay(unsigned long mmillis)
+void IotWebConfFactory::mydelay(unsigned long milliseconds)
 {
   unsigned long delayStart = millis();
-  while (mmillis > millis() - delayStart)
+  while (milliseconds > millis() - delayStart)
   {
     IotWebConfFactory::iotWebConf.doLoop();
     delay(1);
   }
-  //IotWebConfFactory::iotWebConf.delay(mmillis);
+  //IotWebConfFactory::iotWebConf.delay(milliseconds);
 }

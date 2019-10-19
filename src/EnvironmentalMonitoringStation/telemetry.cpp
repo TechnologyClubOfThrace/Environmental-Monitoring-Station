@@ -38,11 +38,6 @@ void Telemetry::setTemperatureCelcius(float temperature_celcius)
   m_temperature_celcius = temperature_celcius;
 }
 
-void Telemetry::setPhotoresistor(float photoresistor)
-{
-  m_photoresistor = photoresistor;
-}
-
 void Telemetry::setBarometricPressure(float barometricPressure)
 {
   m_barometricPressure = barometricPressure;
@@ -81,11 +76,6 @@ void Telemetry::setPMS7003_MP_10(float mp_10)
 float Telemetry::getTemperatureCelcius()
 {
   return m_temperature_celcius;
-}
-
-float Telemetry::getPhotoresistor()
-{
-  return m_photoresistor;
 }
 
 float Telemetry::getBarometricPressure()
@@ -153,7 +143,6 @@ String Telemetry::getTelemetryJson()
   String humidity       =  (String)getHumidity();
   String carbonMonoxide =  (String)getCarbonMonoxide();
   String carbonDioxide  =  (String)getCarbonDioxide();
-  String photoresistor  =  (String)getPhotoresistor();
   String PMS7003_MP_1   =  (String)getPMS7003_MP_1();
   String PMS7003_MP_2_5 =  (String)getPMS7003_MP_2_5();
   String PMS7003_MP_10  =  (String)getPMS7003_MP_10();
@@ -164,10 +153,11 @@ String Telemetry::getTelemetryJson()
   json += ",\"humidity\":\""       + humidity                      + "\"";
   json += ",\"carbonMonoxide\":\"" + carbonMonoxide                + "\"";
   json += ",\"carbonDioxide\":\""  + carbonDioxide                 + "\"";
+  if(getPMS7003_MP_10() > -1){ //pms library returns NULL sometimes probably because of a bug in the implementation. We do not send PMS data in case of NULL (-300 in our case)
   json += ",\"PMS7003_MP_1\":\""   + PMS7003_MP_1                  + "\"";
   json += ",\"PMS7003_MP_2_5\":\"" + PMS7003_MP_2_5                + "\"";
   json += ",\"PMS7003_MP_10\":\""  + PMS7003_MP_10                 + "\"";
-  json += ",\"photoresistor\":\""  + photoresistor                 + "\"";
+  }
   json += ",\"uptime\":\""         + uptime_formatter::getUptime() + "\"";
   json += "}";
 
