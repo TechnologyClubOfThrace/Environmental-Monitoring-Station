@@ -16,12 +16,13 @@ def blockPrint():
 def enablePrint():
 	sys.stdout = sys.__stdout__
 	
-def check_url(url):
+def check_url(ip):
 	global lines
 	try:
+		url = 'http://' + ip + '/report.html'
 		r = requests.get(url, verify=False, timeout=1)
 		if r.text == 'OK':
-			lines.append('Scan_Resault,192.168.1.1,Good,' + url)
+			lines.append('Real_Resault,' + ip + ',Good,' + url)
 	except:
 		pass
 
@@ -36,7 +37,7 @@ class main(QMainWindow):
 		qtRectangle.moveCenter(centerPoint)
 		self.move(qtRectangle.topLeft())
 		
-		self.setWindowTitle('EnvScan')
+		self.setWindowTitle('EnvScann')
 		self.pushButton.clicked.connect(self.on_pushButtonX_clicked)
 		self.tableWidget.doubleClicked.connect(self.on_tableWidget_double_clicked)
 		self.tableWidget.horizontalHeader().setDefaultAlignment(Qt.AlignLeft)
@@ -72,9 +73,9 @@ class main(QMainWindow):
 		
 	def on_pushButtonX_clicked(self):
 		global lines
-		urls = []
+		ip_list = []
 		lines.clear()
-		urls.clear()
+		ip_list.clear()
 		
 		#test lines
 		lines = ["Fake_1,192.168.1.1,Good,http://192.168.1.1/report", "Fake_2,192.168.1.2,Good,http://192.168.1.2/report", "Fake_3,192.168.1.3,Good,http://192.168.1.3/report"] 
@@ -90,13 +91,13 @@ class main(QMainWindow):
 						if ip.network_prefix == 24: # Control the subnet
 							for x in range(254):
 								#print (ip_split[0] + '.' + ip_split[1] + '.' + ip_split[2] + '.' + str(x))
-								urls.append('http://' + ip_split[0] + '.' + ip_split[1] + '.' + ip_split[2] + '.' + str(x) + '/report.html')
+								ip_list.append(ip_split[0] + '.' + ip_split[1] + '.' + ip_split[2] + '.' + str(x))
 							
 		QMessageBox.information(self, 'Notification', 'This operation will take some time!')
 		
 
 		threads = []
-		for line in urls:
+		for line in ip_list:
 			thread = threading.Thread(target=check_url, args=[line])
 			thread.start()
 			threads.append(thread)
