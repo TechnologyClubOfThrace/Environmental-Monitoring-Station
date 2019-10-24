@@ -52,7 +52,7 @@ PMS::DATA data;
 
 #include <limits.h>
 #include "MQ7.h"
-MQ7 mq7(MQ7_CO_PIN, 5.0);
+MQ7 mq7(MQ7_CO_PIN, 3.3);
 
 //BME280 atmospheric pressure and hunidity sensor (temperature sensor is not used)
 #include <Adafruit_Sensor.h>
@@ -132,6 +132,7 @@ long double mypow(float v, float p)
 */
 
 
+/*
 void read_carbon_monoxide()
 {
   //analog read 
@@ -144,16 +145,16 @@ void read_carbon_monoxide()
 
 
 
-  /*
-  if (true){
-    int R2 = 2000;
-    sensor_volt = (float)sensorValue / 4096 * 3.3;
-    RS_gas = ((3.3 * R2) / sensor_volt) - R2;
-    static float R0_computed = RS_gas / 1;
-    console_serial.print("R0: ");
-    console_serial.println(R0_computed);
-  }
-  */
+  
+  //if (true){
+  //  int R2 = 2000;
+  //  sensor_volt = (float)sensorValue / 4096 * 3.3;
+  //  RS_gas = ((3.3 * R2) / sensor_volt) - R2;
+  //  static float R0_computed = RS_gas / 1;
+  //  console_serial.print("R0: ");
+  //  console_serial.println(R0_computed);
+  //}
+  
   
   
 
@@ -165,6 +166,14 @@ void read_carbon_monoxide()
    telemetry.setCarbonMonoxide(ppm);
    console_serial.println("Carbon Monoxide is: " + (String)telemetry.getCarbonMonoxide() +" ppm"); 
 }
+*/
+
+void read_carbon_monoxide()
+{
+  telemetry.setCarbonMonoxide(mq7.getPPM());
+  console_serial.println("Carbon Monoxide is: " + (String)telemetry.getCarbonMonoxide() +" ppm"); 
+}
+
 
 
 void read_temperature()
