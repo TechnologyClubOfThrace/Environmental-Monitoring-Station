@@ -76,4 +76,5 @@ class IotWebConfFactory
     static void clean_eeprom();
 
     static void handleRoot();
+    static void handleStatus();
 };

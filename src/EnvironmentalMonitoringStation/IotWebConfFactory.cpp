@@ -89,6 +89,7 @@ void IotWebConfFactory::setup()
   // -- Set up required URL handlers on the web server.
   IotWebConfFactory::server.on("/", handleRoot);
   IotWebConfFactory::server.on("/config", []{ IotWebConfFactory::iotWebConf.handleConfig(); });
+  IotWebConfFactory::server.on("/status", handleStatus);
   IotWebConfFactory::server.onNotFound([](){ IotWebConfFactory::iotWebConf.handleNotFound(); });
 
   Serial.println("IotWebConfFactory Setup Done!");
@@ -180,6 +181,19 @@ void IotWebConfFactory::handleRoot()
   s += "</ul>";
   s += "Go to <a href='config'>configure page</a> to change values.";
   s += "</body></html>\n";
+
+  server.send(200, "text/html", s);
+}
+
+void IotWebConfFactory::handleStatus()
+{
+  // -- Let IotWebConf test and handle captive portal requests.
+  if (iotWebConf.handleCaptivePortal())
+  {
+    // -- Captive portal request were already served.
+    return;
+  }
+  String s = "EvironmentalMonitoringStation";
 
   server.send(200, "text/html", s);
 }
