@@ -6,7 +6,7 @@
 
 Καθώς αναπτύσουμε τον σταθμό, ανεβάζουμε και τα δεδομένα που συλλέγονται από τους αισθητήρες εδώ: [Environmental Monitoring Station Live Experimental URL](http://chat.steth.gr:8080/dashboard/d9e7bd60-6f2f-11e9-97d0-1f977088dab9?publicId=ab4913f0-6f2f-11e9-97d0-1f977088dab9)
 
-![](https://github.com/TechnologyClubOfThrace/Environmental-Monitoring-Station/blob/master/environmental-monitoring-station.jpg)
+![](https://github.com/TechnologyClubOfThrace/Environmental-Monitoring-Station/blob/master/environmental-monitoring-station-v1.jpg)
 
 
 ### Το hardware
