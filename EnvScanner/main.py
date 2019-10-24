@@ -78,7 +78,7 @@ class main(QMainWindow):
 		ip_list.clear()
 		
 		#test lines
-		lines = ["Fake_1,192.168.1.1,Good,http://192.168.1.1/report", "Fake_2,192.168.1.2,Good,http://192.168.1.2/report", "Fake_3,192.168.1.3,Good,http://192.168.1.3/report"] 
+		#lines = ["Fake_1,192.168.1.1,Good,http://192.168.1.1/report", "Fake_2,192.168.1.2,Good,http://192.168.1.2/report", "Fake_3,192.168.1.3,Good,http://192.168.1.3/report"] 
 		
 		adapters = ifaddr.get_adapters()
 		for adapter in adapters:
