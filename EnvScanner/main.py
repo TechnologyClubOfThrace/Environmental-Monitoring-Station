@@ -19,10 +19,10 @@ def enablePrint():
 def check_url(ip):
 	global lines
 	try:
-		url = 'http://' + ip + '/report.html'
+		url = 'http://' + ip + '/status'
 		r = requests.get(url, verify=False, timeout=1)
-		if r.text == 'OK':
-			lines.append('Real_Resault,' + ip + ',Good,' + url)
+		if r.text == 'EvironmentalMonitoringStation':
+			lines.append('Real_Resault,' + ip + ',Good,' + 'http://' + ip)
 	except:
 		pass
 
