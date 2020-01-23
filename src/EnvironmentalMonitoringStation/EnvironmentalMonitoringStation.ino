@@ -28,7 +28,8 @@
 //TODO: check if there is a constant to get the ADC resolution of the board at compile time
 static const unsigned int ADC_RESOLUTION = 4096;
 
-#define MQ7_CO_PIN   39 //ADC GPIO34 - Carbon Monoxide Sensor
+//TODO: remove pin 39 connection from PCB
+//#define MQ7_CO_PIN   39 //ADC GPIO34 - Carbon Monoxide Sensor
 
 #include "IotWebConfFactory.h"
 
@@ -51,8 +52,6 @@ PMS::DATA data;
 #include <DallasTemperature.h>
 
 #include <limits.h>
-#include "MQ7.h"
-MQ7 mq7(MQ7_CO_PIN, 3.3);
 
 //BME280 atmospheric pressure and hunidity sensor (temperature sensor is not used)
 #include <Adafruit_Sensor.h>
@@ -63,6 +62,10 @@ MQ7 mq7(MQ7_CO_PIN, 3.3);
 #define BME_CS 10
 #define SEALEVELPRESSURE_HPA (1019.50)
 Adafruit_BME280 bme280;
+
+//MiCS-6814
+#include <Wire.h>
+#include "MutichannelGasSensor.h"
 
 //library that collects and sends data to the IoT server
 #include "telemetry.h"
@@ -107,9 +110,10 @@ void setup() {
       Adafruit_BME280::FILTER_OFF);
       */
   }
-    
-  //set carbon monoxide sensor analog pin for input
-  pinMode(MQ7_CO_PIN, INPUT);
+
+  //MiCS-6814
+  gas.begin(0x04);//the default I2C address of the slave is 0x04
+  gas.powerOn();
 
   IotWebConfFactory::setup();
 
@@ -170,11 +174,21 @@ void read_carbon_monoxide()
 
 void read_carbon_monoxide()
 {
-  telemetry.setCarbonMonoxide(mq7.getPPM());
+  telemetry.setCarbonMonoxide(gas.measure_CO());
   console_serial.println("Carbon Monoxide is: " + (String)telemetry.getCarbonMonoxide() +" ppm"); 
 }
 
+void read_nitrogen_dioxide()
+{
+  telemetry.setNitrogenDioxide(gas.measure_NO2());
+  console_serial.println("Nitrogen Dioxide is: " + (String)telemetry.getNitrogenDioxide() +" ppm"); 
+}
 
+void read_hydrogen()
+{
+  telemetry.setHydrogen(gas.measure_H2());
+  console_serial.println("Hydrogen is: " + (String)telemetry.getHydrogen() +" ppm"); 
+}
 
 void read_temperature()
 {
@@ -289,8 +303,14 @@ void loop() {
   //reads the humidity from the BME280 sensor
   read_humidity();
   
-  //reads the carbon monoxide value from the MQ-7 sensor
+  //reads the carbon monoxide value from the MiCS-6814 sensor
   read_carbon_monoxide();
+
+  //reads the nitrogen dioxide value from the MiCS-6814 sensor
+  read_nitrogen_dioxide();
+
+  //reads the hydrogen value from the MiCS-6814 sensor
+  read_hydrogen();
   
   //sends all sensor data to the IoT server
   telemetry.send_data_to_iot_server();

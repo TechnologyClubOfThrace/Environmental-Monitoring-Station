@@ -35,7 +35,9 @@ class Telemetry
     void setPMS7003_MP_10(float mp_10);
     void setHumidity(float humidity);
     void setCarbonMonoxide(float carbonMonoxide);
+    void setNitrogenDioxide(float nitrogenDioxide);
     void setCarbonDioxide(float carbonDioxide);
+    void setHydrogen(float hydrogen);
     void setTelemetryUrl(String url);
     void setTelemetryPort(String port);
     void setTelemetryToken(String token);
@@ -51,7 +53,9 @@ class Telemetry
     float getPMS7003_MP_10();
     float getHumidity();
     float getCarbonMonoxide();
+    float getNitrogenDioxide();
     float getCarbonDioxide();
+    float getHydrogen();
     String getTelemetryJson();
     
     void send_data_to_iot_server();
@@ -62,9 +66,11 @@ class Telemetry
     float m_humidity = -300;
     float m_carbonMonoxide = -300;
     float m_carbonDioxide = -300;
+    float m_nitrogenDioxide = -300;
     float m_PMS7003_MP_1 = -300;
     float m_PMS7003_MP_2_5 = -300;
     float m_PMS7003_MP_10 = -300;
+    float m_hydrogen = -300;
     String m_telemetry_url;
     String m_telemetry_port;
     String m_telemetry_token;

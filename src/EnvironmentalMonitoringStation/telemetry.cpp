@@ -53,6 +53,11 @@ void Telemetry::setCarbonMonoxide(float carbonMonoxide)
   m_carbonMonoxide = carbonMonoxide;
 }
 
+void Telemetry::setNitrogenDioxide(float nitrogenDioxide)
+{
+  m_nitrogenDioxide = nitrogenDioxide;
+}
+
 void Telemetry::setCarbonDioxide(float carbonDioxide)
 {
   m_carbonDioxide = carbonDioxide;
@@ -71,6 +76,11 @@ void Telemetry::setPMS7003_MP_2_5(float mp_2_5)
 void Telemetry::setPMS7003_MP_10(float mp_10)
 {
   m_PMS7003_MP_10 = mp_10;
+}
+
+void Telemetry::setHydrogen(float hydrogen)
+{
+  m_hydrogen = hydrogen;
 }
 
 float Telemetry::getTemperatureCelcius()
@@ -98,6 +108,11 @@ float Telemetry::getCarbonDioxide()
   return m_carbonDioxide;
 }
 
+float Telemetry::getNitrogenDioxide()
+{
+  return m_nitrogenDioxide;
+}
+
 float Telemetry::getPMS7003_MP_1()
 {
   return m_PMS7003_MP_1;
@@ -111,6 +126,11 @@ float Telemetry::getPMS7003_MP_2_5()
 float Telemetry::getPMS7003_MP_10()
 {
   return m_PMS7003_MP_10;
+}
+
+float Telemetry::getHydrogen()
+{
+  return m_hydrogen;
 }
 
 void Telemetry::send_data_to_iot_server()
@@ -140,26 +160,32 @@ String Telemetry::getTelemetryJson()
 {
   String json;
 
-  String temperature    =  (String)getTemperatureCelcius();
-  String pressure       =  (String)getBarometricPressure();
-  String humidity       =  (String)getHumidity();
-  String carbonMonoxide =  (String)getCarbonMonoxide();
-  String carbonDioxide  =  (String)getCarbonDioxide();
-  String PMS7003_MP_1   =  (String)getPMS7003_MP_1();
-  String PMS7003_MP_2_5 =  (String)getPMS7003_MP_2_5();
-  String PMS7003_MP_10  =  (String)getPMS7003_MP_10();
+  String temperature     =  (String)getTemperatureCelcius();
+  String pressure        =  (String)getBarometricPressure();
+  String humidity        =  (String)getHumidity();
+  String carbonMonoxide  =  (String)getCarbonMonoxide();
+  String carbonDioxide   =  (String)getCarbonDioxide();
+  String nitrogenDioxide =  (String)getNitrogenDioxide();
+  String PMS7003_MP_1    =  (String)getPMS7003_MP_1();
+  String PMS7003_MP_2_5  =  (String)getPMS7003_MP_2_5();
+  String PMS7003_MP_10   =  (String)getPMS7003_MP_10();
+  String hydrogen        =  (String)getHydrogen();
 
   json += "{";
-  json += "\"temperature\":\""     + temperature                   + "\"";
-  json += ",\"pressure\":\""       + pressure                      + "\"";
-  json += ",\"humidity\":\""       + humidity                      + "\"";
-  json += ",\"carbonMonoxide\":\"" + carbonMonoxide                + "\"";
-  json += ",\"carbonDioxide\":\""  + carbonDioxide                 + "\"";
+  json += "\"temperature\":\""      + temperature                   + "\"";
+  json += ",\"pressure\":\""        + pressure                      + "\"";
+  json += ",\"humidity\":\""        + humidity                      + "\"";
+  json += ",\"carbonMonoxide\":\""  + carbonMonoxide                + "\"";
+  json += ",\"carbonDioxide\":\""   + carbonDioxide                 + "\"";
+  json += ",\"nitrogenDioxide\":\"" + nitrogenDioxide               + "\"";
+  json += ",\"hydrogen\":\""        + hydrogen                      + "\"";
+  
   if(getPMS7003_MP_10() > -1){ //pms library returns NULL sometimes probably because of a bug in the implementation. We do not send PMS data in case of NULL (-300 in our case)
-  json += ",\"PMS7003_MP_1\":\""   + PMS7003_MP_1                  + "\"";
-  json += ",\"PMS7003_MP_2_5\":\"" + PMS7003_MP_2_5                + "\"";
-  json += ",\"PMS7003_MP_10\":\""  + PMS7003_MP_10                 + "\"";
+  json += ",\"PMS7003_MP_1\":\""    + PMS7003_MP_1                  + "\"";
+  json += ",\"PMS7003_MP_2_5\":\""  + PMS7003_MP_2_5                + "\"";
+  json += ",\"PMS7003_MP_10\":\""   + PMS7003_MP_10                 + "\"";
   }
+  
   json += ",\"uptime\":\""         + uptime_formatter::getUptime() + "\"";
   json += "}";
 
