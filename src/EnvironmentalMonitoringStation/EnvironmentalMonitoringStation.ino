@@ -268,6 +268,8 @@ void loop() {
   #endif
   
   IotWebConfFactory::loop();
+  //setTelemetryUrl, setTelemetryToken and setTelemetryPort should be called on IoTWebConfFactory::configSaved callback.
+  //Till we implement the callback, we use it as it is bellow for simplicity
   telemetry.setTelemetryUrl(IotWebConfFactory::getConfigUrl());
   telemetry.setTelemetryToken(IotWebConfFactory::getConfigToken());
   telemetry.setTelemetryPort(IotWebConfFactory::getConfigPort());

@@ -116,7 +116,9 @@ float Telemetry::getPMS7003_MP_10()
 void Telemetry::send_data_to_iot_server()
 {
   HTTPClient http;
-  //http.begin("http://iot.techthrace.com:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
+  http.begin("http://iot.techthrace.com:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
+  //http.begin("http://iot.techthrace.com:8080/api/v1/hVDr5uCDchaFcnojdMzH/telemetry");
+
   http.begin("http://" + getTelemetryUrl() + ":" + getTelemetryPort() + "/api/v1/" + getTelemetryToken() + "/telemetry");
   http.addHeader("Content-Type", "application/json"); //Specify content-type header
 
