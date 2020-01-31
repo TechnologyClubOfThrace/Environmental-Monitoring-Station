@@ -120,58 +120,6 @@ void setup() {
   console_serial.println("Setup done! Entering environmental monitoring station main loop");
 }
 
-/*
-long double mypow(float v, float p)
-{
-    int sign=1;
-    float r;
-    if (v<0)
-    {
-        sign = (-1);
-        v *= sign;
-    }
-    r = pow(v, p);
-    return (r*sign);
-}
-*/
-
-
-/*
-void read_carbon_monoxide()
-{
-  //analog read 
-  int sensorValue = analogRead(MQ7_CO_PIN);
- 
-  //read R0 resistanse
-  static const float R0 = 4826.67; //used for sensor calibration
-  static float sensor_volt = 0;
-  static float RS_gas = 0;
-
-
-
-  
-  //if (true){
-  //  int R2 = 2000;
-  //  sensor_volt = (float)sensorValue / 4096 * 3.3;
-  //  RS_gas = ((3.3 * R2) / sensor_volt) - R2;
-  //  static float R0_computed = RS_gas / 1;
-  //  console_serial.print("R0: ");
-  //  console_serial.println(R0_computed);
-  //}
-  
-  
-  
-
-   sensor_volt = ((float)sensorValue) / ADC_RESOLUTION * 3.3;
-   RS_gas = (3.3 - sensor_volt) / sensor_volt;
-   float ratio = RS_gas / R0; //Replace R0 with the value found using the sketch above
-   float x = 1538.46 * ratio;
-   float ppm = pow(x, -1.709);
-   telemetry.setCarbonMonoxide(ppm);
-   console_serial.println("Carbon Monoxide is: " + (String)telemetry.getCarbonMonoxide() +" ppm"); 
-}
-*/
-
 void read_carbon_monoxide()
 {
   telemetry.setCarbonMonoxide(gas.measure_CO());
