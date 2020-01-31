@@ -86,6 +86,16 @@ void setup() {
   CO2_MHZ19.begin(MHZ19_serial);                                // *Important, Pass your Stream reference 
   CO2_MHZ19.autoCalibration();                              // Turn auto calibration ON (disable with autoCalibration(false))
 
+
+  delay(1000);
+  
+  //MiCS-6814
+  //IotWebConfFactory::mydelay(1000);
+  gas.begin(0x04);//the default I2C address of the slave is 0x04
+  gas.powerOn();
+
+  delay(1500);
+  
   // BME280 sensor init
   unsigned bme280_status;
   // default settings
@@ -110,10 +120,6 @@ void setup() {
       Adafruit_BME280::FILTER_OFF);
       */
   }
-
-  //MiCS-6814
-  gas.begin(0x04);//the default I2C address of the slave is 0x04
-  gas.powerOn();
 
   IotWebConfFactory::setup();
 
