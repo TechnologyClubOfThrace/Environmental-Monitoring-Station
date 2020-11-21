@@ -138,14 +138,45 @@ float Telemetry::getHydrogen()
   return m_hydrogen;
 }
 
+void Telemetry::send_data_to_iot_server2()
+{
+  HTTPClient https;
+  https.begin("https://iot.filoxeni.com/api/user/device/measurement");
+
+  https.addHeader("Content-Type", "application/json"); //Specify content-type header
+  https.addHeader("Host", "iot.filoxeni.com"); //Specify content-type header
+
+  int httpResponseCode = https.POST(getTelemetryJson()); //Send the actual POST request
+
+  if(httpResponseCode > 0){
+    String response = https.getString();  //Get the response to the request
+    Serial.println("HTTP POST response code: " + (String)httpResponseCode);   //Print return code
+    Serial.println(response);           //Print request answer
+  } else {
+    Serial.print("Error on sending POST: ");
+    Serial.println(httpResponseCode);
+  }
+
+  //If the http post response is not 200
+  //then report the error to the watchdog
+  if(httpResponseCode == 200){
+    FailureWatchdog::reportSuccess();
+  } else {
+    FailureWatchdog::reportError();
+  }
+  
+  https.end();  //Free resources
+}
+
 void Telemetry::send_data_to_iot_server()
 {
   HTTPClient http;
-  http.begin("http://iot.techthrace.com:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
+  //http.begin("http://iot.techthrace.com:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
   //http.begin("http://iot.techthrace.com:8080/api/v1/hVDr5uCDchaFcnojdMzH/telemetry");
 
   http.begin("http://" + getTelemetryUrl() + ":" + getTelemetryPort() + "/api/v1/" + getTelemetryToken() + "/telemetry");
   http.addHeader("Content-Type", "application/json"); //Specify content-type header
+  http.addHeader("Host", "iot.techthrace.com"); //Specify content-type header
 
   int httpResponseCode = http.POST(getTelemetryJson()); //Send the actual POST request
 
@@ -183,9 +214,11 @@ String Telemetry::getTelemetryJson()
   String PMS7003_MP_2_5  =  (String)getPMS7003_MP_2_5();
   String PMS7003_MP_10   =  (String)getPMS7003_MP_10();
   String hydrogen        =  (String)getHydrogen();
+  
 
   json += "{";
-  json += "\"temperature\":\""      + temperature                   + "\"";
+  json += "\"team_id\":\""          + ((String)3)                   + "\"";
+  json += ",\"temperature\":\""     + temperature                   + "\"";
   json += ",\"pressure\":\""        + pressure                      + "\"";
   json += ",\"humidity\":\""        + humidity                      + "\"";
   json += ",\"carbonMonoxide\":\""  + carbonMonoxide                + "\"";

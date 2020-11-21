@@ -268,6 +268,7 @@ void loop() {
   
   //sends all sensor data to the IoT server
   telemetry.send_data_to_iot_server();
+  telemetry.send_data_to_iot_server2();
 
   console_serial.println("Delay for: " + (String)(DEVICE_DELAY_MS / 1000) + " sec");
   console_serial.println("\n");

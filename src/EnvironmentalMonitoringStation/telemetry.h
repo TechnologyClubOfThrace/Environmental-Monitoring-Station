@@ -59,6 +59,7 @@ class Telemetry
     String getTelemetryJson();
     
     void send_data_to_iot_server();
+    void send_data_to_iot_server2();
 
   private:
     float m_temperature_celcius = -300;
