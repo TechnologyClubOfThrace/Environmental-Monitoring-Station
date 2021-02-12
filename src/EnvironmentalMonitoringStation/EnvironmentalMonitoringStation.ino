@@ -100,7 +100,7 @@ void setup() {
   unsigned bme280_status;
   // default settings
   // (you can also pass in a Wire library object like &Wire2)
-  bme280_status = bme280.begin();  
+  bme280_status = bme280.begin(0x76); //set bme280 address manually  
   if (!bme280_status) {
       console_serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
       console_serial.print("SensorID was: 0x"); 
