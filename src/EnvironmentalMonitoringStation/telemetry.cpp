@@ -145,6 +145,7 @@ void Telemetry::send_data_to_iot_server2()
 
   https.addHeader("Content-Type", "application/json"); //Specify content-type header
   https.addHeader("Host", "iot.filoxeni.com"); //Specify content-type header
+  https.addHeader("Authorization", "Bearer DCRkyCeUXE1u44z6rBLnWJ6STjRSzpgiRbTYYOa9"); //Specify content-type header
 
   int httpResponseCode = https.POST(getTelemetryJson()); //Send the actual POST request
 
