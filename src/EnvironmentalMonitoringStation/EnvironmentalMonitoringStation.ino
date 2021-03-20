@@ -81,13 +81,13 @@ void setup() {
   PMS7003_serial.begin(PMS::BAUD_RATE, SERIAL_8N1, 16, 17);
   
   //setup_co2();
-  delay(100); //delay workaround for MHZ19 sensor readings in standalone power mode by costas laftsis delay and restart expert
+  delay(200); //delay workaround for MHZ19 sensor readings in standalone power mode by costas laftsis delay and restart expert
   MHZ19_serial.begin(9600, SERIAL_8N1, MHZ19_RX_PIN, MHZ19_TX_PIN); // ESP32 Example
   CO2_MHZ19.begin(MHZ19_serial);                                // *Important, Pass your Stream reference 
   CO2_MHZ19.autoCalibration();                              // Turn auto calibration ON (disable with autoCalibration(false))
 
 
-  delay(1000);
+  delay(1500);
   
   //MiCS-6814
   //IotWebConfFactory::mydelay(1000);
