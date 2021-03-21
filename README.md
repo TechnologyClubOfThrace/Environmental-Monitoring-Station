@@ -4,7 +4,7 @@
 
 Στην Ελλάδα πέρα απο κάποιες μετρήσεις για την ατμοσφαιρική ρύπανση που γίνονται κυρίως στην Αθήνα και την θεσσαλονίκη, δεν γνωρίζουμε σε πραγματικό χρόνο τι συμβαίνει στην ατμόσφαιρα.
 
-Καθώς αναπτύσουμε τον σταθμό, ανεβάζουμε και τα δεδομένα που συλλέγονται από τους αισθητήρες εδώ: [Environmental Monitoring Station Live Experimental URL](http://iot.steth.gr/dashboard/77711c70-1467-11ea-b03c-05fa27eee691?publicId=e1c6fd00-e92f-11e9-a846-0761562e699c)
+Καθώς αναπτύσουμε τον σταθμό, ανεβάζουμε και τα δεδομένα που συλλέγονται από τους αισθητήρες εδώ: [Environmental Monitoring Station Live Experimental URL](steth.gr/env)
 
 ![](https://github.com/TechnologyClubOfThrace/Environmental-Monitoring-Station/blob/master/environmental-monitoring-station-v1.jpg)
 
