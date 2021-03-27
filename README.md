@@ -4,7 +4,7 @@
 
 Στην Ελλάδα πέρα απο κάποιες μετρήσεις για την ατμοσφαιρική ρύπανση που γίνονται κυρίως στην Αθήνα και την θεσσαλονίκη, δεν γνωρίζουμε σε πραγματικό χρόνο τι συμβαίνει στην ατμόσφαιρα.
 
-Καθώς αναπτύσουμε τον σταθμό, ανεβάζουμε και τα δεδομένα που συλλέγονται από τους αισθητήρες εδώ: [Environmental Monitoring Station Live Experimental URL](https://github.com/TechnologyClubOfThrace/Environmental-Monitoring-Station)
+Καθώς αναπτύσουμε τον σταθμό, ανεβάζουμε και τα δεδομένα που συλλέγονται από τους αισθητήρες εδώ: [Environmental Monitoring Station Live Experimental URL](http://iot.techthrace.com:8080/dashboard/c0007be0-88fe-11eb-8796-2726fafed088?publicId=e1c6fd00-e92f-11e9-a846-0761562e699c)
 
 ![](https://github.com/TechnologyClubOfThrace/Environmental-Monitoring-Station/blob/master/environmental-monitoring-station-v1.jpg)
 
@@ -33,7 +33,7 @@
 
 Πέρα απο το λογισμικό που τρέχει μέσα στο ESP32, υπάρχει και το server side κομμάτι όπου συλλέγονται και παρουσιάζονται όλες οι μετρήσεις του σταθμού. Για τον σκοπό χρησιμοποιούμε το [Thingsboard](https://thingsboard.io/ "Thingsboard") το οποίο εχουμε εγκαταστήσει στον Debian GNU/Linux server του συλλόγου. 
 
-#### Το dashboard όπου απεικονίζονται όλα τα δεδομένα που συλλέγονται είναι διαθέσιμο από [εδώ](http://iot.techthrace.com:8080/dashboard/c0007be0-88fe-11eb-8796-2726fafed088?publicId=e1c6fd00-e92f-11e9-a846-0761562e699c "iot")
+#### Το dashboard όπου απεικονίζονται όλα τα δεδομένα που συλλέγονται είναι διαθέσιμο από [εδώ](http://iot.techthrace.com:8080/dashboard/c0007be0-88fe-11eb-8796-2726fafed088?publicId=e1c6fd00-e92f-11e9-a846-0761562e699c)
 
 ### Συμμετοχή στην ανάπτυξη
 Για την επεξεργασία αρχείων .md χρησιμοποιούμε συνήθως το [https://pandao.github.io/editor.md](https://pandao.github.io/editor.md "https://pandao.github.io/editor.md")
