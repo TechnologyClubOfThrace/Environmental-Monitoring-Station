@@ -166,7 +166,7 @@ void Telemetry::send_data_to_iot_server2()
     }
     
   } else {
-    Serial.print("Error on sending POST: ");
+    Serial.print("Error on sending POST (filoxeni): ");
     Serial.println(httpResponseCode);
   }
 
@@ -187,7 +187,14 @@ void Telemetry::send_data_to_iot_server()
   //http.begin("http://iot.techthrace.com:8080/api/v1/wGNzhlUkS6EFpW41FcuZ/telemetry");
   //http.begin("http://iot.techthrace.com:8080/api/v1/hVDr5uCDchaFcnojdMzH/telemetry");
 
-  http.begin("http://" + getTelemetryUrl() + ":" + getTelemetryPort() + "/api/v1/" + getTelemetryToken() + "/telemetry");
+  String telemetryPort = getTelemetryPort();
+  if (telemetryPort == NULL || telemetryPort == "" || telemetryPort == "0"){
+    telemetryPort = "443";
+  }
+  
+  String url = "https://" + getTelemetryUrl() + ":" + telemetryPort + "/api/v1/" + getTelemetryToken() + "/telemetry";
+  Serial.println(url);
+  http.begin(url);
   http.addHeader("Content-Type", "application/json"); //Specify content-type header
   http.addHeader("Host", "iot.techthrace.com"); //Specify content-type header
 
@@ -198,7 +205,7 @@ void Telemetry::send_data_to_iot_server()
     Serial.println("HTTP POST response code: " + (String)httpResponseCode);   //Print return code
     Serial.println(response);           //Print request answer
   } else {
-    Serial.print("Error on sending POST: ");
+    Serial.print("Error on sending POST (thingsboard): ");
     Serial.println(httpResponseCode);
   }
 

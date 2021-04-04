@@ -22,7 +22,7 @@
  * ***********************************************************************/
 
 //conditional variables for various purposes
-//#define DEBUG_FAST_LOOP //makes looping faster without big delays
+#define DEBUG_FAST_LOOP //makes looping faster without big delays
 
 //the board should support an ADC resolution of 12bits
 //TODO: check if there is a constant to get the ADC resolution of the board at compile time
