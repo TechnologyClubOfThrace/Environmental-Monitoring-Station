@@ -161,6 +161,7 @@ void Telemetry::send_data_to_iot_server2()
       Serial.println("Json parsing failed");
     } else {
       const char * fw_update_url = parsed["firmware_upgrade_url"];
+      
       Serial.println(fw_update_url);
     }
     
