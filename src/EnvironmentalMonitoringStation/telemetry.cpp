@@ -154,13 +154,13 @@ void Telemetry::send_data_to_iot_server2()
     String response = https.getString();  //Get the response to the request
     Serial.println("HTTP POST response code: " + (String)httpResponseCode);   //Print return code
     Serial.println(response);           //Print request answer
-    StaticJsonBuffer<1024> JSONBuffer;                         //Memory pool
-    JsonObject& parsed = JSONBuffer.parseObject(response); //Parse message
+    StaticJsonDocument<1024> json_doc;                         //Memory pool
+    deserializeJson(json_doc, response);//Parse message
     
-    if (!parsed.success()) {   //Check for errors in parsing
+    if (json_doc == NULL) {   //Check for errors in parsing
       Serial.println("Json parsing failed");
     } else {
-      const char * fw_update_url = parsed["firmware_upgrade_url"];
+      const char * fw_update_url = json_doc["firmware_upgrade_url"];
       
       Serial.println(fw_update_url);
     }
