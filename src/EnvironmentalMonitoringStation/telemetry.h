@@ -62,9 +62,7 @@ class Telemetry
     
     void send_data_to_iot_server();
     void send_data_to_iot_server2();
-    void send_data_to_wunderground(String WeatherStationID, String WeatherStationPassword);
-
-
+    void send_data_to_wunderground(String weather_station_id, String weather_station_password);
 
   private:
     String m_firmware_version = "";
@@ -81,4 +79,8 @@ class Telemetry
     String m_telemetry_url;
     String m_telemetry_port;
     String m_telemetry_token;
+
+    //helper functions
+    int celsius_to_fahrenheit(float celsius);
+    int hPa_to_inches_of_mercury(float hPa);
 };

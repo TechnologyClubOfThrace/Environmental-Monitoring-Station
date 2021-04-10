@@ -23,9 +23,10 @@
 //Firmware version
 const String FIRMWARE_VERSION = "1.1";
 
-
 //conditional variables for various purposes
 //#define DEBUG_FAST_LOOP //makes looping faster without big delays
+
+//#define SEND_DATA_TO_WUNDERGROUND;
 
 //the board should support an ADC resolution of 12bits
 //TODO: check if there is a constant to get the ADC resolution of the board at compile time
@@ -276,9 +277,13 @@ void loop() {
   //sends all sensor data to the IoT server
   telemetry.send_data_to_iot_server();
   telemetry.send_data_to_iot_server2();
+
+#ifdef SEND_DATA_TO_WUNDERGROUND
+  //send sensor data to wunderground
   String WeatherStationID = "123456789";
   String WeatherStationPassword = "12345678";
   telemetry.send_data_to_wunderground( WeatherStationID,  WeatherStationPassword);
+ #endif
 
   console_serial.println("Delay for: " + (String)(DEVICE_DELAY_MS / 1000) + " sec");
   console_serial.println("\n");

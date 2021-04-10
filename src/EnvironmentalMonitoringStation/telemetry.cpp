@@ -261,6 +261,53 @@ void Telemetry::send_data_to_iot_server()
   http.end();  //Free resources
 }
 
+void Telemetry::send_data_to_wunderground(String weather_station_id, String weather_station_password)
+{
+  float  temperature     =  getTemperatureCelcius();
+  float  pressure        =  getBarometricPressure();
+  String humidity        =  (String)getHumidity(); 
+
+  String request;
+  String response = "";
+
+  request  = "/weatherstation/updateweatherstation.php?ID=";
+  request += weather_station_id;
+  request += "&PASSWORD=";
+  request += weather_station_password;
+  request += "&dateutc=now";
+  request += "&tempf=";
+  request += (String)celsius_to_fahrenheit(temperature);
+  request += "&baromin=";
+  request += (String)hPa_to_inches_of_mercury(pressure);
+  request += "&humidity=";
+  request += humidity;
+  request += "&action=updateraw";
+
+  String     wunderground_url = "weatherstation.wunderground.com";
+  const char HTTP_HOST[]     = " HTTP/1.0\r\nHost: ";
+  const char USER_AGENT[]    = "\r\nUser-Agent: Arduino\r\n\r\n";
+  HTTPClient http;
+  Serial.println("Sending update to wunderground.com");
+
+  String url = "https://" + wunderground_url + request;
+  Serial.println(url);
+  Serial.println(request);
+  http.begin(url);
+  http.addHeader("Content-Type", "application/json"); //Specify content-type header
+
+  int httpResponseCode = http.GET(); //Send the actual  request
+
+  if(httpResponseCode > 0){
+    String response = http.getString();  //Get the response to the request
+    Serial.println("wunderground HTTP POST response: " + (String)httpResponseCode);   //Print return code
+    Serial.println(response);           //Print request answer
+  } else {
+    Serial.print("Error on sending POST (wunderground): ");
+    Serial.println(httpResponseCode);
+  }
+
+}
+
 String Telemetry::getTelemetryJson()
 {
   String json;
@@ -333,58 +380,12 @@ String Telemetry::getTelemetryToken()
   return m_telemetry_token;
 }
 
-// methods to update online weather services
-int celsius2fahrenheit(float celsius) {
+
+
+int Telemetry::celsius_to_fahrenheit(float celsius) {
   return celsius * 1.8 + 32;
 }
 
-int hPa2inchesofmercury(float hPa) {
+int Telemetry::hPa_to_inches_of_mercury(float hPa) {
   return hPa *0.029529983071445;
-}
-
-void Telemetry::send_data_to_wunderground(String WeatherStationID, String WeatherStationPassword)
-{
-  float temperature     =  getTemperatureCelcius();
-  float pressure        =  getBarometricPressure();
-  String humidity        =  (String)getHumidity(); 
-
-  String request;
-  String response = "";
-
-  request = "/weatherstation/updateweatherstation.php?ID=";
-  request += WeatherStationID;
-  request += "&PASSWORD=";
-  request += WeatherStationPassword;
-  request += "&dateutc=now";
-  request += "&tempf=";
-  request += (String)celsius2fahrenheit(temperature);
-  request += "&baromin=";
-  request += (String)hPa2inchesofmercury(pressure);
-  request += "&humidity=";
-  request += humidity;
-  request += "&action=updateraw";
-
-  String  wundergroundURL = "weatherstation.wunderground.com";
-  const char HTTP_HOST[]  = " HTTP/1.0\r\nHost: ";
-  const char USER_AGENT[] = "\r\nUser-Agent: Arduino\r\n\r\n";
-  HTTPClient http;
-  Serial.println("Sending update to wundergrond.com");
-
-  String url = "https://" + wundergroundURL + request;
-  Serial.println(url);
-  Serial.println(request);
-  http.begin(url);
-  http.addHeader("Content-Type", "application/json"); //Specify content-type header
-
-  int httpResponseCode = http.GET(); //Send the actual  request
-
-  if(httpResponseCode > 0){
-    String response = http.getString();  //Get the response to the request
-    Serial.println("wunderground HTTP POST response: " + (String)httpResponseCode);   //Print return code
-    Serial.println(response);           //Print request answer
-  } else {
-    Serial.print("Error on sending POST (wunderground): ");
-    Serial.println(httpResponseCode);
-  }
-
 }
