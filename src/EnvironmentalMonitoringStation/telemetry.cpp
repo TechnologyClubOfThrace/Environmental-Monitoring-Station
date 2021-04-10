@@ -26,7 +26,8 @@
 #include "ArduinoJson.h"
 
 //for http post request to IoT server
-#include "HTTPClient.h"
+#include <HTTPClient.h>
+#include <ESP32httpUpdate.h>
 
 #include "uptime_formatter.h"
 
@@ -37,6 +38,11 @@ Telemetry::Telemetry()
   //is no connection to the internet, because of a router bug or 
   //an unknown issue that might appear.
   FailureWatchdog::setErrorsRestartThreshold(35);
+}
+
+void Telemetry::setFirmwareVersion(const String firmware_version)
+{
+  m_firmware_version = firmware_version;
 }
 
 void Telemetry::setTemperatureCelcius(float temperature_celcius)
@@ -87,6 +93,11 @@ void Telemetry::setPMS7003_MP_10(float mp_10)
 void Telemetry::setHydrogen(float hydrogen)
 {
   m_hydrogen = hydrogen;
+}
+
+String Telemetry::getFirmwareVersion()
+{
+  return m_firmware_version;
 }
 
 float Telemetry::getTemperatureCelcius()
@@ -156,23 +167,53 @@ void Telemetry::send_data_to_iot_server2()
     Serial.println(response);           //Print request answer
     StaticJsonDocument<1024> json_doc;                         //Memory pool
     deserializeJson(json_doc, response);//Parse message
+
+    
     
     if (json_doc == NULL) {   //Check for errors in parsing
       Serial.println("Json parsing failed");
     } else {
-      const char * fw_update_url = json_doc["firmware_upgrade_url"];
       
-      Serial.println(fw_update_url);
+      bool upgrade_available = json_doc["upgrade_available"].as<bool>();
+      if (upgrade_available){
+      
+         Serial.println("Upgrade available!");
+         Serial.println(upgrade_available);
+
+        const char * fw_update_url = json_doc["firmware_upgrade_url"];
+      
+        Serial.println(fw_update_url);    
+        
+        t_httpUpdate_return ret = ESPhttpUpdate.update(fw_update_url);
+        switch(ret) {
+            case HTTP_UPDATE_FAILED:
+                //Serial.println("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                Serial.println("error update");
+                break;
+
+            case HTTP_UPDATE_NO_UPDATES:
+                Serial.println("HTTP_UPDATE_NO_UPDATES");
+                break;
+
+            case HTTP_UPDATE_OK:
+                Serial.println("HTTP_UPDATE_OK");
+                break;
+        }
+         
+
+         
+      } //if (upgrade_available){
+        
     }
     
-  } else {
+    } else {
     Serial.print("Error on sending POST (filoxeni): ");
     Serial.println(httpResponseCode);
   }
 
-  //If the http post response is not 200
+  //If the http post response is not 200 or 201(laravel api)
   //then report the error to the watchdog
-  if(httpResponseCode == 200){
+  if(httpResponseCode == 200 || httpResponseCode == 201){
     FailureWatchdog::reportSuccess();
   } else {
     FailureWatchdog::reportError();
@@ -224,35 +265,37 @@ String Telemetry::getTelemetryJson()
 {
   String json;
 
-  String temperature     =  (String)getTemperatureCelcius();
-  String pressure        =  (String)getBarometricPressure();
-  String humidity        =  (String)getHumidity();
-  String carbonMonoxide  =  (String)getCarbonMonoxide();
-  String carbonDioxide   =  (String)getCarbonDioxide();
-  String nitrogenDioxide =  (String)getNitrogenDioxide();
-  String PMS7003_MP_1    =  (String)getPMS7003_MP_1();
-  String PMS7003_MP_2_5  =  (String)getPMS7003_MP_2_5();
-  String PMS7003_MP_10   =  (String)getPMS7003_MP_10();
-  String hydrogen        =  (String)getHydrogen();
+  String firmware_version =  (String)getFirmwareVersion();
+  String temperature      =  (String)getTemperatureCelcius();
+  String pressure         =  (String)getBarometricPressure();
+  String humidity         =  (String)getHumidity();
+  String carbonMonoxide   =  (String)getCarbonMonoxide();
+  String carbonDioxide    =  (String)getCarbonDioxide();
+  String nitrogenDioxide  =  (String)getNitrogenDioxide();
+  String PMS7003_MP_1     =  (String)getPMS7003_MP_1();
+  String PMS7003_MP_2_5   =  (String)getPMS7003_MP_2_5();
+  String PMS7003_MP_10    =  (String)getPMS7003_MP_10();
+  String hydrogen         =  (String)getHydrogen();
   
 
   json += "{";
-  json += "\"team_id\":\""          + ((String)3)                   + "\"";
-  json += ",\"temperature\":\""     + temperature                   + "\"";
-  json += ",\"pressure\":\""        + pressure                      + "\"";
-  json += ",\"humidity\":\""        + humidity                      + "\"";
-  json += ",\"carbonMonoxide\":\""  + carbonMonoxide                + "\"";
-  json += ",\"carbonDioxide\":\""   + carbonDioxide                 + "\"";
-  json += ",\"nitrogenDioxide\":\"" + nitrogenDioxide               + "\"";
-  json += ",\"hydrogen\":\""        + hydrogen                      + "\"";
+  json += "\"team_id\":\""           + ((String)3)                   + "\"";
+  json += ",\"firmware_version\":\"" + ((String)firmware_version)    + "\"";
+  json += ",\"temperature\":\""      + temperature                   + "\"";
+  json += ",\"pressure\":\""         + pressure                      + "\"";
+  json += ",\"humidity\":\""         + humidity                      + "\"";
+  json += ",\"carbonMonoxide\":\""   + carbonMonoxide                + "\"";
+  json += ",\"carbonDioxide\":\""    + carbonDioxide                 + "\"";
+  json += ",\"nitrogenDioxide\":\""  + nitrogenDioxide               + "\"";
+  json += ",\"hydrogen\":\""         + hydrogen                      + "\"";
   
   if(getPMS7003_MP_10() > -1){ //pms library returns NULL sometimes probably because of a bug in the implementation. We do not send PMS data in case of NULL (-300 in our case)
-  json += ",\"PMS7003_MP_1\":\""    + PMS7003_MP_1                  + "\"";
-  json += ",\"PMS7003_MP_2_5\":\""  + PMS7003_MP_2_5                + "\"";
-  json += ",\"PMS7003_MP_10\":\""   + PMS7003_MP_10                 + "\"";
+  json += ",\"PMS7003_MP_1\":\""     + PMS7003_MP_1                  + "\"";
+  json += ",\"PMS7003_MP_2_5\":\""   + PMS7003_MP_2_5                + "\"";
+  json += ",\"PMS7003_MP_10\":\""    + PMS7003_MP_10                 + "\"";
   }
   
-  json += ",\"uptime\":\""         + uptime_formatter::getUptime() + "\"";
+  json += ",\"uptime\":\""           + uptime_formatter::getUptime() + "\"";
   json += "}";
 
   Serial.println("Uptime: " + uptime_formatter::getUptime());

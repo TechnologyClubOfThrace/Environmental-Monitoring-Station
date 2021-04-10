@@ -57,7 +57,7 @@ class IotWebConfFactory
 
     // -- Callback method declarations.
     static void configSaved();
-    static boolean formValidator();
+    static boolean formValidator(iotwebconf::WebRequestWrapper* webRequestWrapper);
 
     static DNSServer dnsServer;
     static WebServer server;
@@ -68,10 +68,10 @@ class IotWebConfFactory
 
     static IotWebConf iotWebConf;
 
-    static IotWebConfSeparator separator1;
-    static IotWebConfParameter iotwebconf_url_string_param_value;
-    static IotWebConfParameter iotwebconf_port_int_param_value;
-    static IotWebConfParameter iotwebconf_token_string_param_value;
+    static iotwebconf::ParameterGroup separator1;
+    static iotwebconf::TextParameter iotwebconf_url_string_param_value;
+    static iotwebconf::NumberParameter iotwebconf_port_int_param_value;
+    static iotwebconf::TextParameter iotwebconf_token_string_param_value;
 
     static void clean_eeprom();
 

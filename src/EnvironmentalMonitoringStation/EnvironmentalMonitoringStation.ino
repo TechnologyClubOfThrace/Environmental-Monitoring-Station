@@ -20,6 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Environmental Monitoring Station.  If not, see <http://www.gnu.org/licenses/>.
  * ***********************************************************************/
+//Firmware version
+const String FIRMWARE_VERSION = "1.1";
+
 
 //conditional variables for various purposes
 //#define DEBUG_FAST_LOOP //makes looping faster without big delays
@@ -76,6 +79,9 @@ void setup() {
   //console output
   Serial.begin(115200, SERIAL_8N1, 3, 1);//required for IotWebConfFactory serial monitoring in debug mode
   console_serial.begin(115200, SERIAL_8N1, 3, 1);
+
+  //pass firmware version to telemetry object
+  telemetry.setFirmwareVersion(FIRMWARE_VERSION);
 
   //setup_pms7003();
   PMS7003_serial.begin(PMS::BAUD_RATE, SERIAL_8N1, 16, 17);
@@ -227,6 +233,7 @@ void read_mh_z19_co2_data()
 
 void loop() {
   console_serial.println("Begin loop");
+  console_serial.println("Firmware version: " + FIRMWARE_VERSION);
 
   //wait 60sec to read next sensor data
   #ifdef DEBUG_FAST_LOOP

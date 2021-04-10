@@ -57,10 +57,10 @@ IotWebConf IotWebConfFactory::iotWebConf(IotWebConfFactory::thingName,
                                          IotWebConfFactory::CONFIG_VERSION);
                                          
 
-IotWebConfSeparator IotWebConfFactory::separator1 = IotWebConfSeparator();
-IotWebConfParameter IotWebConfFactory::iotwebconf_url_string_param_value = IotWebConfParameter("Server Url", "stringParam_url", url_string_param_value, STRING_LEN);
-IotWebConfParameter IotWebConfFactory::iotwebconf_port_int_param_value = IotWebConfParameter("Port", "intParam_port", port_int_param_value, NUMBER_LEN, "number", "1..65535", NULL, "min='1' max='65535' step='1'");
-IotWebConfParameter IotWebConfFactory::iotwebconf_token_string_param_value = IotWebConfParameter("Token", "stringParam_token", token_string_param_value, STRING_LEN);
+iotwebconf::ParameterGroup IotWebConfFactory::separator1 = iotwebconf::ParameterGroup("group1", "");
+iotwebconf::TextParameter IotWebConfFactory::iotwebconf_url_string_param_value = iotwebconf::TextParameter("Server Url", "stringParam_url", url_string_param_value, STRING_LEN);
+iotwebconf::NumberParameter IotWebConfFactory::iotwebconf_port_int_param_value = iotwebconf::NumberParameter("Port", "intParam_port", port_int_param_value, NUMBER_LEN, "number", "1..65535", "min='1' max='65535' step='1'");
+iotwebconf::TextParameter IotWebConfFactory::iotwebconf_token_string_param_value = iotwebconf::TextParameter("Token", "stringParam_token", token_string_param_value, STRING_LEN);
 
 IotWebConfFactory::IotWebConfFactory()                                  
 {
@@ -76,10 +76,14 @@ void IotWebConfFactory::setup()
 
   IotWebConfFactory::iotWebConf.setStatusPin(IotWebConfFactory::STATUS_PIN);
   //iotWebConf.setConfigPin(CONFIG_PIN);
-  IotWebConfFactory::iotWebConf.addParameter(&IotWebConfFactory::separator1);
-  IotWebConfFactory::iotWebConf.addParameter(&IotWebConfFactory::iotwebconf_url_string_param_value);
-  IotWebConfFactory::iotWebConf.addParameter(&IotWebConfFactory::iotwebconf_port_int_param_value);
-  IotWebConfFactory::iotWebConf.addParameter(&IotWebConfFactory::iotwebconf_token_string_param_value);
+  IotWebConfFactory::separator1.addItem(&IotWebConfFactory::iotwebconf_url_string_param_value);
+  IotWebConfFactory::separator1.addItem(&IotWebConfFactory::iotwebconf_port_int_param_value);
+  IotWebConfFactory::separator1.addItem(&IotWebConfFactory::iotwebconf_token_string_param_value);
+  IotWebConfFactory::iotWebConf.addParameterGroup(&IotWebConfFactory::separator1);
+  
+  //IotWebConfFactory::iotWebConf.addParameter(&IotWebConfFactory::iotwebconf_url_string_param_value);
+  //IotWebConfFactory::iotWebConf.addParameter(&IotWebConfFactory::iotwebconf_port_int_param_value);
+  //IotWebConfFactory::iotWebConf.addParameter(&IotWebConfFactory::iotwebconf_token_string_param_value);
   IotWebConfFactory::iotWebConf.setConfigSavedCallback(&IotWebConfFactory::configSaved);
   IotWebConfFactory::iotWebConf.setFormValidator(&IotWebConfFactory::formValidator);
 
@@ -137,7 +141,7 @@ void IotWebConfFactory::configSaved()
   Serial.println("Configuration was updated.");
 }
 
-boolean IotWebConfFactory::formValidator()
+boolean IotWebConfFactory::formValidator(iotwebconf::WebRequestWrapper* webRequestWrapper)
 {
   return true;
   

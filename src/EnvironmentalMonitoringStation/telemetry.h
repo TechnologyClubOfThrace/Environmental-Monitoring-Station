@@ -27,6 +27,7 @@ class Telemetry
 {
   public:
     Telemetry();
+    void setFirmwareVersion(const String firmware_version);
     void setTemperatureCelcius(float temperature_celcius);
     void setPhotoresistor(float photoresistor);
     void setBarometricPressure(float barometricPressure);
@@ -41,10 +42,11 @@ class Telemetry
     void setTelemetryUrl(String url);
     void setTelemetryPort(String port);
     void setTelemetryToken(String token);
+    
     String getTelemetryUrl();
     String getTelemetryPort();
     String getTelemetryToken();
-    
+    String getFirmwareVersion();
     float getTemperatureCelcius();
     float getPhotoresistor();
     float getBarometricPressure();
@@ -62,6 +64,7 @@ class Telemetry
     void send_data_to_iot_server2();
 
   private:
+    String m_firmware_version = "";
     float m_temperature_celcius = -300;
     float m_barometricPressure = -300;
     float m_humidity = -300;
