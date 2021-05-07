@@ -86,20 +86,25 @@ void setup() {
 
   //setup_pms7003();
   PMS7003_serial.begin(PMS::BAUD_RATE, SERIAL_8N1, 16, 17);
-  
+
   //setup_co2();
   delay(200); //delay workaround for MHZ19 sensor readings in standalone power mode by costas laftsis delay and restart expert
   MHZ19_serial.begin(9600, SERIAL_8N1, MHZ19_RX_PIN, MHZ19_TX_PIN); // ESP32 Example
   CO2_MHZ19.begin(MHZ19_serial);                                // *Important, Pass your Stream reference 
   CO2_MHZ19.autoCalibration();                              // Turn auto calibration ON (disable with autoCalibration(false))
 
-
   delay(1500);
-  
-  //MiCS-6814
-  //IotWebConfFactory::mydelay(1000);
-  gas.begin(0x04);//the default I2C address of the slave is 0x04
-  gas.powerOn();
+
+  // Start the Wire library and init MiCS-6814 sensor only if is detected
+  Wire.begin();
+  Wire.beginTransmission(0x04);
+  if (Wire.endTransmission() == 0) {
+   //MiCS-6814
+   //IotWebConfFactory::mydelay(1000);
+   gas.begin(0x04); //the default I2C address of the slave is 0x04
+   gas.powerOn();
+  }
+ 
 
   delay(1500);
   
@@ -119,16 +124,18 @@ void setup() {
   } else {
       console_serial.println("BME280 init success");
 
-      /*
-      bme280.setSampling(Adafruit_BME280::MODE_FORCED,
-      Adafruit_BME280::SAMPLING_X1, // temperature sensor off
-      Adafruit_BME280::SAMPLING_X1, // pressure
-      Adafruit_BME280::SAMPLING_X1, // humidity
-      Adafruit_BME280::FILTER_OFF);
-      */
+      
+      //bme280.setSampling(Adafruit_BME280::MODE_FORCED,
+      //Adafruit_BME280::SAMPLING_X1, // temperature sensor off
+      //Adafruit_BME280::SAMPLING_X1, // pressure
+      //Adafruit_BME280::SAMPLING_X1, // humidity
+      //Adafruit_BME280::FILTER_OFF);
+      
   }
 
   IotWebConfFactory::setup();
+
+  
 
   console_serial.println("Setup done! Entering environmental monitoring station main loop");
 }
@@ -235,7 +242,7 @@ void read_mh_z19_co2_data()
 void loop() {
   console_serial.println("Begin loop");
   console_serial.println("Firmware version: " + FIRMWARE_VERSION);
-
+  
   //wait 60sec to read next sensor data
   #ifdef DEBUG_FAST_LOOP
   static unsigned long DEVICE_DELAY_MS = 3000; //3 seconds

@@ -48,7 +48,7 @@ class IotWebConfFactory
     
     // -- Configuration specific key. The value should be modified if config structure was changed.
     static const char CONFIG_VERSION[];
-    
+
     
     // -- Status indicator pin.
     //      First it will light up (kept LOW), on Wifi connection it will blink,
@@ -74,7 +74,6 @@ class IotWebConfFactory
     static iotwebconf::TextParameter iotwebconf_token_string_param_value;
 
     static void clean_eeprom();
-
     static void handleRoot();
     static void handleStatus();
 };
