@@ -24,7 +24,7 @@
 const String FIRMWARE_VERSION = "1.1";
 
 //conditional variables for various purposes
-//#define DEBUG_FAST_LOOP //makes looping faster without big delays
+#define DEBUG_FAST_LOOP //makes looping faster without big delays
 
 //#define SEND_DATA_TO_WUNDERGROUND;
 
@@ -81,6 +81,10 @@ void setup() {
   Serial.begin(115200, SERIAL_8N1, 3, 1);//required for IotWebConfFactory serial monitoring in debug mode
   console_serial.begin(115200, SERIAL_8N1, 3, 1);
 
+  while (!Serial) ; // wait for Arduino Serial Monitor
+  while (!console_serial) ; // wait for Arduino Serial Monitor
+  delay(500);
+
   //pass firmware version to telemetry object
   telemetry.setFirmwareVersion(FIRMWARE_VERSION);
 
@@ -93,13 +97,13 @@ void setup() {
   CO2_MHZ19.begin(MHZ19_serial);                                // *Important, Pass your Stream reference 
   CO2_MHZ19.autoCalibration();                              // Turn auto calibration ON (disable with autoCalibration(false))
 
-  delay(1500);
+  delay(1000);
 
-  // Start the Wire library and init MiCS-6814 sensor only if is detected
+  // Start the Wire library and init MiCS-6814 sensor only if it is detected
   Wire.begin();
   Wire.beginTransmission(0x04);
   if (Wire.endTransmission() == 0) {
-   //MiCS-6814
+   //Ok, MiCS-6814 is detected.
    //IotWebConfFactory::mydelay(1000);
    gas.begin(0x04); //the default I2C address of the slave is 0x04
    gas.powerOn();
