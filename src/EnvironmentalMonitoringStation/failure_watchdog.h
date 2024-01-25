@@ -1,4 +1,4 @@
-﻿/* ***********************************************************************
+/* ***********************************************************************
  * Environmental Monitoring Station
  * (C) 2019 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
  *

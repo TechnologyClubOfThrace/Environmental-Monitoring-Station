@@ -1,9 +1,8 @@
 /* ************************************************************************
  * Environmental Monitoring Station
- * (C) 2019 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
- * (C) 2019 by Yiannis Grigoriadis
- * (C) 2019 by Kostas Laftsis
- * (C) 2019 by Marios Zikos
+ * (C) 2019-2024 by Yiannis Bourkelis (https://github.com/YiannisBourkelis/)
+ * (C) 2019-2024 by Yiannis Grigoriadis
+ * (C) 2019-2024 by Kostas Laftsis
  *
  * This file is part of Environmental Monitoring Station.
  *
@@ -20,6 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Environmental Monitoring Station.  If not, see <http://www.gnu.org/licenses/>.
  * ***********************************************************************/
+
 //Firmware version
 const String FIRMWARE_VERSION = "1.1";
 
