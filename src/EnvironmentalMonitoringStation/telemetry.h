@@ -34,6 +34,7 @@ class Telemetry
     void setPMS7003_MP_2_5(float mp_2_5);
     void setPMS7003_MP_10(float mp_10);
     void setHumidity(float humidity);
+    void setBME280Temperature(float temperature);
     void setCarbonMonoxide(float carbonMonoxide);
     void setNitrogenDioxide(float nitrogenDioxide);
     void setCarbonDioxide(float carbonDioxide);
@@ -53,6 +54,7 @@ class Telemetry
     float getPMS7003_MP_2_5();
     float getPMS7003_MP_10();
     float getHumidity();
+    float getBME280Temperature();
     float getCarbonMonoxide();
     float getNitrogenDioxide();
     float getCarbonDioxide();
@@ -64,17 +66,18 @@ class Telemetry
     void send_data_to_wunderground(String weather_station_id, String weather_station_password);
 
   private:
-    String m_firmware_version = "";
+    String m_firmware_version   = "";
     float m_temperature_celcius = -300;
-    float m_barometricPressure = -300;
-    float m_humidity = -300;
-    float m_carbonMonoxide = -300;
-    float m_carbonDioxide = -300;
-    float m_nitrogenDioxide = -300;
-    float m_PMS7003_MP_1 = -300;
-    float m_PMS7003_MP_2_5 = -300;
-    float m_PMS7003_MP_10 = -300;
-    float m_hydrogen = -300;
+    float m_barometricPressure  = -300;
+    float m_humidity            = -300;
+    float m_bme280Temperature   = -300;
+    float m_carbonMonoxide      = -300;
+    float m_carbonDioxide       = -300;
+    float m_nitrogenDioxide     = -300;
+    float m_PMS7003_MP_1        = -300;
+    float m_PMS7003_MP_2_5      = -300;
+    float m_PMS7003_MP_10       = -300;
+    float m_hydrogen            = -300;
     String m_telemetry_url;
     String m_telemetry_port;
     String m_telemetry_token;

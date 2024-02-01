@@ -21,10 +21,10 @@
  * ***********************************************************************/
 
 //Firmware version
-const String FIRMWARE_VERSION = "1.1";
+const String FIRMWARE_VERSION = "1.2";
 
 //conditional variables for various purposes
-#define DEBUG_FAST_LOOP //makes looping faster without big delays
+//#define DEBUG_FAST_LOOP //makes looping faster without big delays
 
 //#define SEND_DATA_TO_WUNDERGROUND;
 
@@ -194,6 +194,13 @@ void read_humidity()
   console_serial.println("Humidity is: " + (String)telemetry.getHumidity() + " %");
 }
 
+void read_bme280_temperature()
+{
+  telemetry.setBME280Temperature(bme280.readTemperature());
+  console_serial.println("BME280 Temperature is: " + (String)telemetry.getBME280Temperature());
+}
+
+
 void read_pms7003_data()
 {
   pms.wakeUp();
@@ -275,6 +282,9 @@ void loop() {
 
   //reads the humidity from the BME280 sensor
   read_humidity();
+
+  //reads the temperature from BME280 sensor
+  read_bme280_temperature();
   
   //reads the carbon monoxide value from the MiCS-6814 sensor
   read_carbon_monoxide();

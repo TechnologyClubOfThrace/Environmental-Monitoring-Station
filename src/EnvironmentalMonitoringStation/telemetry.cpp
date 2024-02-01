@@ -59,6 +59,11 @@ void Telemetry::setHumidity(float humidity)
   m_humidity = humidity;
 }
 
+void Telemetry::setBME280Temperature(float temperature)
+{
+  m_bme280Temperature = temperature;
+}
+
 void Telemetry::setCarbonMonoxide(float carbonMonoxide)
 {
   m_carbonMonoxide = carbonMonoxide;
@@ -112,6 +117,11 @@ float Telemetry::getBarometricPressure()
 float Telemetry::getHumidity()
 {
   return m_humidity;
+}
+
+float Telemetry::getBME280Temperature()
+{
+  return m_bme280Temperature;
 }
 
 float Telemetry::getCarbonMonoxide()
@@ -311,37 +321,39 @@ String Telemetry::getTelemetryJson()
 {
   String json;
 
-  String firmware_version =  (String)getFirmwareVersion();
-  String temperature      =  (String)getTemperatureCelcius();
-  String pressure         =  (String)getBarometricPressure();
-  String humidity         =  (String)getHumidity();
-  String carbonMonoxide   =  (String)getCarbonMonoxide();
-  String carbonDioxide    =  (String)getCarbonDioxide();
-  String nitrogenDioxide  =  (String)getNitrogenDioxide();
-  String PMS7003_MP_1     =  (String)getPMS7003_MP_1();
-  String PMS7003_MP_2_5   =  (String)getPMS7003_MP_2_5();
-  String PMS7003_MP_10    =  (String)getPMS7003_MP_10();
-  String hydrogen         =  (String)getHydrogen();
+  String firmware_version   =  (String)getFirmwareVersion();
+  String temperature        =  (String)getTemperatureCelcius();
+  String pressure           =  (String)getBarometricPressure();
+  String humidity           =  (String)getHumidity();
+  String bme280Temperature  =  (String)getBME280Temperature();
+  String carbonMonoxide     =  (String)getCarbonMonoxide();
+  String carbonDioxide      =  (String)getCarbonDioxide();
+  String nitrogenDioxide    =  (String)getNitrogenDioxide();
+  String PMS7003_MP_1       =  (String)getPMS7003_MP_1();
+  String PMS7003_MP_2_5     =  (String)getPMS7003_MP_2_5();
+  String PMS7003_MP_10      =  (String)getPMS7003_MP_10();
+  String hydrogen           =  (String)getHydrogen();
   
 
   json += "{";
-  json += "\"team_id\":\""           + ((String)3)                   + "\"";
-  json += ",\"firmware_version\":\"" + ((String)firmware_version)    + "\"";
-  json += ",\"temperature\":\""      + temperature                   + "\"";
-  json += ",\"pressure\":\""         + pressure                      + "\"";
-  json += ",\"humidity\":\""         + humidity                      + "\"";
-  json += ",\"carbonMonoxide\":\""   + carbonMonoxide                + "\"";
-  json += ",\"carbonDioxide\":\""    + carbonDioxide                 + "\"";
-  json += ",\"nitrogenDioxide\":\""  + nitrogenDioxide               + "\"";
-  json += ",\"hydrogen\":\""         + hydrogen                      + "\"";
+  json += "\"team_id\":\""            + ((String)3)                   + "\"";
+  json += ",\"firmware_version\":\""  + ((String)firmware_version)    + "\"";
+  json += ",\"temperature\":\""       + temperature                   + "\"";
+  json += ",\"pressure\":\""          + pressure                      + "\"";
+  json += ",\"humidity\":\""          + humidity                      + "\"";
+  json += ",\"bme280Temperature\":\"" + bme280Temperature             + "\"";
+  json += ",\"carbonMonoxide\":\""    + carbonMonoxide                + "\"";
+  json += ",\"carbonDioxide\":\""     + carbonDioxide                 + "\"";
+  json += ",\"nitrogenDioxide\":\""   + nitrogenDioxide               + "\"";
+  json += ",\"hydrogen\":\""          + hydrogen                      + "\"";
   
   if(getPMS7003_MP_10() > -1){ //pms library returns NULL sometimes probably because of a bug in the implementation. We do not send PMS data in case of NULL (-300 in our case)
-  json += ",\"PMS7003_MP_1\":\""     + PMS7003_MP_1                  + "\"";
-  json += ",\"PMS7003_MP_2_5\":\""   + PMS7003_MP_2_5                + "\"";
-  json += ",\"PMS7003_MP_10\":\""    + PMS7003_MP_10                 + "\"";
+  json += ",\"PMS7003_MP_1\":\""      + PMS7003_MP_1                  + "\"";
+  json += ",\"PMS7003_MP_2_5\":\""    + PMS7003_MP_2_5                + "\"";
+  json += ",\"PMS7003_MP_10\":\""     + PMS7003_MP_10                 + "\"";
   }
   
-  json += ",\"uptime\":\""           + uptime_formatter::getUptime() + "\"";
+  json += ",\"uptime\":\""            + uptime_formatter::getUptime() + "\"";
   json += "}";
 
   Serial.println("Uptime: " + uptime_formatter::getUptime());
