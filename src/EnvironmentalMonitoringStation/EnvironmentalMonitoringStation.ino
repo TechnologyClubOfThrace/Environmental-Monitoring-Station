@@ -21,7 +21,7 @@
  * ***********************************************************************/
 
 //Firmware version
-const String FIRMWARE_VERSION = "1.2";
+const String FIRMWARE_VERSION = "1.3";
 
 //conditional variables for various purposes
 //#define DEBUG_FAST_LOOP //makes looping faster without big delays
@@ -75,6 +75,15 @@ Adafruit_BME280 bme280;
 #include "telemetry.h"
 Telemetry telemetry;
 
+/*
+* Setup a oneWire instance to communicate with any OneWire devices
+* and pass our oneWire reference to Dallas Temperature. 
+* Temperature Data wire is plugged into pin 13 on the Arduino
+*/
+#define ONE_WIRE_BUS 4
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature temperature_sensors(&oneWire);
+
 //setup code runs once at the beginning
 void setup() {
   //console output
@@ -97,7 +106,12 @@ void setup() {
   CO2_MHZ19.begin(MHZ19_serial);                                // *Important, Pass your Stream reference 
   CO2_MHZ19.autoCalibration();                              // Turn auto calibration ON (disable with autoCalibration(false))
 
-  delay(1000);
+  delay(400);
+
+  //init DallasTemperature
+  temperature_sensors.begin();
+
+  delay(400);
 
   // Start the Wire library and init MiCS-6814 sensor only if it is detected
   Wire.begin();
@@ -164,17 +178,6 @@ void read_hydrogen()
 
 void read_temperature()
 {
-  // temperature Data wire is plugged into pin 13 on the Arduino
-  static const byte ONE_WIRE_BUS = 4;
-  // 9 - 12 precision
-  static const byte TEMPERATURE_PRECISION = 12;
-  
-  // Setup a oneWire instance to communicate with any OneWire devices  
-  // (not just Maxim/Dallas temperature ICs) 
-  static OneWire oneWire(ONE_WIRE_BUS); 
-  // Pass our oneWire reference to Dallas Temperature. 
-  static DallasTemperature temperature_sensors(&oneWire);
-
   console_serial.println("Requesting temperatures...");
   temperature_sensors.requestTemperatures(); // Send the command to get temperature readings
   console_serial.print("Temperature is: ");
